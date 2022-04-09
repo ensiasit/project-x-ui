@@ -4,7 +4,11 @@ import Dropdown from "../Dropdown/Dropdown";
 
 const Header = () => {
   return (
-    <AppBar position="static" color="transparent">
+    <AppBar
+      position="static"
+      color="transparent"
+      sx={{ border: 0, borderBottom: "1px solid rgba(0, 0, 0, 0.2)" }}
+    >
       <Toolbar>
         <Box sx={{ display: "flex", flexDirection: "row", flexGrow: 1 }}>
           <Button color="inherit" sx={{ mr: 2 }}>

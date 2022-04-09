@@ -16,7 +16,6 @@ interface DropdownProps {
 
 const Dropdown = ({ items }: DropdownProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
   const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -34,7 +33,7 @@ const Dropdown = ({ items }: DropdownProps) => {
     <>
       <Button
         color="inherit"
-        sx={{ ml: 2 }}
+        sx={{ ml: 2, minHeight: 64 }}
         id="competitions-list-dropdown"
         aria-controls={open ? "competitions-list" : undefined}
         aria-haspopup="true"
@@ -54,7 +53,14 @@ const Dropdown = ({ items }: DropdownProps) => {
           MenuListProps={{
             "aria-labelledby": "competitions-list-dropdown",
           }}
-          sx={{ top: "calc((64px - 36.5px) / 2) !important" }}
+          PaperProps={{
+            style: {
+              position: "fixed",
+              right: 0,
+              border: "1px rgba(0, 0, 0, 0.2) solid ",
+              borderTop: 0,
+            },
+          }}
         >
           {nonSelectedItems.map(({ label }, index) => (
             <Box key={nanoid()}>
