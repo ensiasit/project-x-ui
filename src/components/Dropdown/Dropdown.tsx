@@ -55,8 +55,8 @@ const Dropdown = ({ items }: DropdownProps) => {
           }}
           PaperProps={{
             style: {
-              position: "fixed",
-              right: 0,
+              // position: "fixed",
+              // right: 0,
               border: "1px rgba(0, 0, 0, 0.2) solid ",
               borderTop: 0,
             },
