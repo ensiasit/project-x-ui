@@ -1,0 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+
+* {
+  font-family: "Open Sans", sans-serif !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.MuiButton-text {
+  text-transform: none !important;
+}
+
+.MuiList-root {
+  border-left: 1px solid rgba(0, 0, 0, 0.2) !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.2) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2) !important;
+}
+
+.MuiAppBar-root {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2) !important;
+}
