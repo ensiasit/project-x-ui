@@ -1,21 +1,23 @@
 import React, { useState } from "react";
-import { Button, Menu, MenuItem, Divider, Box } from "@mui/material";
+import { Button, Menu, MenuItem, Divider, Box, useTheme } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { nanoid } from "nanoid";
 
-interface DropdownItem {
+export interface DropdownItem {
   label: string;
   path: string;
   selected: boolean;
+  onClick?: () => void;
 }
 
 interface DropdownProps {
   items: DropdownItem[];
-  profile: boolean;
+  isProfile: boolean;
 }
 
-const Dropdown = ({ items, profile }: DropdownProps) => {
+const Dropdown = ({ items, isProfile }: DropdownProps) => {
+  const { palette } = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -55,23 +57,35 @@ const Dropdown = ({ items, profile }: DropdownProps) => {
             "aria-labelledby": "competitions-list-dropdown",
           }}
           PaperProps={{
-            style: profile
+            style: isProfile
               ? {
                   position: "fixed",
                   right: 0,
-                  border: "1px rgba(0, 0, 0, 0.2) solid ",
+                  border: `1px solid ${palette.divider}`,
                   borderTop: 0,
+                  minWidth: 140,
                 }
               : {
-                  border: "1px rgba(0, 0, 0, 0.2) solid ",
+                  border: `1px solid ${palette.divider}`,
                   borderTop: 0,
+                  minWidth: 200,
                 },
           }}
         >
-          {nonSelectedItems.map(({ label }, index) => (
+          {nonSelectedItems.map(({ label, onClick }, index) => (
             <Box key={nanoid()}>
               {index > 0 && <Divider />}
-              <MenuItem onClick={handleClose}>{label}</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  if (onClick) {
+                    onClick();
+                  }
+
+                  handleClose();
+                }}
+              >
+                {label}
+              </MenuItem>
             </Box>
           ))}
         </Menu>

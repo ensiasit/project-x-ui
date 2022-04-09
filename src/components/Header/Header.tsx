@@ -1,43 +1,40 @@
-import { AppBar, Toolbar, Button, Box, Divider } from "@mui/material";
+import { AppBar, Toolbar, Button, Box, Divider, useTheme } from "@mui/material";
 
-import Dropdown from "../Dropdown/Dropdown";
+import Dropdown, { DropdownItem } from "../Dropdown/Dropdown";
 
-const Header = () => {
+interface HeaderProps {
+  title: string;
+  competitions: DropdownItem[];
+  profile: DropdownItem[];
+}
+
+const Header = ({ title, competitions, profile }: HeaderProps) => {
+  const { palette, typography } = useTheme();
+
   return (
     <AppBar
       position="static"
-      color="transparent"
-      sx={{ border: 0, borderBottom: "1px solid rgba(0, 0, 0, 0.2)" }}
+      color="default"
+      sx={{
+        border: 0,
+        borderBottom: `1px solid ${palette.divider}`,
+        backgroundImage: "none",
+      }}
     >
       <Toolbar>
         <Box sx={{ display: "flex", flexDirection: "row", flexGrow: 1 }}>
-          <Button color="inherit" sx={{ mr: 2 }}>
-            Project X
+          <Button color="inherit" sx={{ mr: 2, fontSize: typography.h6 }}>
+            {title}
           </Button>
           <Divider
             orientation="vertical"
             variant="middle"
             flexItem
-            sx={{ borderColor: "inherit" }}
+            sx={{ height: 32, mt: "16px" }}
           />
-          <Dropdown
-            items={[
-              { label: "ITHOLIC CPC 2022", path: "#", selected: true },
-              { label: "ITHOLIC CPC 2021", path: "#", selected: false },
-              { label: "ITHOLIC CPC 2023", path: "#", selected: false },
-            ]}
-            profile={false}
-          />
+          <Dropdown items={competitions} isProfile={false} />
         </Box>
-        <Dropdown
-          items={[
-            { label: "John Doe", path: "#", selected: true },
-            { label: "Profile", path: "#", selected: false },
-            { label: "Dark mode", path: "#", selected: false },
-            { label: "Sign out", path: "#", selected: false },
-          ]}
-          profile
-        />
+        <Dropdown items={profile} isProfile />
       </Toolbar>
     </AppBar>
   );

@@ -23,8 +23,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint src/ --fix && prettier --write src/",
-    "prepare": "husky install"
+    "lint": "eslint src/ --fix && prettier --write src/"
   },
   "browserslist": {
     "production": [
