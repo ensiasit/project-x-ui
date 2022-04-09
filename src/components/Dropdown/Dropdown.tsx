@@ -12,9 +12,10 @@ interface DropdownItem {
 
 interface DropdownProps {
   items: DropdownItem[];
+  profile: boolean;
 }
 
-const Dropdown = ({ items }: DropdownProps) => {
+const Dropdown = ({ items, profile }: DropdownProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -54,12 +55,17 @@ const Dropdown = ({ items }: DropdownProps) => {
             "aria-labelledby": "competitions-list-dropdown",
           }}
           PaperProps={{
-            style: {
-              // position: "fixed",
-              // right: 0,
-              border: "1px rgba(0, 0, 0, 0.2) solid ",
-              borderTop: 0,
-            },
+            style: profile
+              ? {
+                  position: "fixed",
+                  right: 0,
+                  border: "1px rgba(0, 0, 0, 0.2) solid ",
+                  borderTop: 0,
+                }
+              : {
+                  border: "1px rgba(0, 0, 0, 0.2) solid ",
+                  borderTop: 0,
+                },
           }}
         >
           {nonSelectedItems.map(({ label }, index) => (

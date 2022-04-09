@@ -26,6 +26,7 @@ const Header = () => {
               { label: "ITHOLIC CPC 2021", path: "#", selected: false },
               { label: "ITHOLIC CPC 2023", path: "#", selected: false },
             ]}
+            profile={false}
           />
         </Box>
         <Dropdown
@@ -35,6 +36,7 @@ const Header = () => {
             { label: "Dark mode", path: "#", selected: false },
             { label: "Sign out", path: "#", selected: false },
           ]}
+          profile
         />
       </Toolbar>
     </AppBar>
