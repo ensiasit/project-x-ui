@@ -15,8 +15,7 @@ const Content = ({ children }: ContentProps) => {
         marginLeft: "260px",
         p: 3,
         height: "calc(100% - 65px - 24px - 24px)",
-        backgroundColor:
-          palette.mode === "light" ? palette.background.default : grey[900],
+        backgroundColor: palette.mode === "light" ? grey[100] : grey[900],
         color: palette.text.primary,
       }}
     >

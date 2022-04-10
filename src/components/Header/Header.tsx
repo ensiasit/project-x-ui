@@ -21,16 +21,19 @@ const Header = ({ title, competitions, profile }: HeaderProps) => {
         backgroundImage: "none",
       }}
     >
-      <Toolbar>
+      <Toolbar sx={{ padding: "0 !important" }}>
         <Box sx={{ display: "flex", flexDirection: "row", flexGrow: 1 }}>
-          <Button color="inherit" sx={{ mr: 2, fontSize: typography.h6 }}>
+          <Button
+            color="inherit"
+            sx={{ mr: 2, fontSize: typography.h6, width: 260, m: 0 }}
+          >
             {title}
           </Button>
           <Divider
             orientation="vertical"
             variant="middle"
             flexItem
-            sx={{ height: 32, mt: "16px" }}
+            sx={{ height: 64, m: 0 }}
           />
           <Dropdown items={competitions} isProfile={false} />
         </Box>

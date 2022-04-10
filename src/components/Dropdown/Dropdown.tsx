@@ -62,12 +62,10 @@ const Dropdown = ({ items, isProfile }: DropdownProps) => {
                   position: "fixed",
                   right: 0,
                   border: `1px solid ${palette.divider}`,
-                  borderTop: 0,
                   minWidth: 140,
                 }
               : {
                   border: `1px solid ${palette.divider}`,
-                  borderTop: 0,
                   minWidth: 200,
                 },
           }}

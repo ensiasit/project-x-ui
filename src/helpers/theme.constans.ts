@@ -1,4 +1,5 @@
 import { createTheme, ThemeOptions } from "@mui/material";
+import { grey } from "@mui/material/colors";
 
 const theme: Partial<ThemeOptions> = {
   typography: {
@@ -33,5 +34,6 @@ export const darkTheme = createTheme({
       default: "black !important",
       paper: "black !important",
     },
+    divider: grey[800],
   },
 });
