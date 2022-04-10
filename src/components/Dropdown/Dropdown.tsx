@@ -34,13 +34,16 @@ const Dropdown = ({ items, isProfile }: DropdownProps) => {
   const selectedItem = items.find(({ selected }) => selected);
   const nonSelectedItems = items.filter(({ selected }) => !selected);
 
+  const menuTitleId = `menu-title-${nanoid()}`;
+  const menuCollapseId = `menu-collapse-${nanoid()}`;
+
   return (
     <>
       <Button
         color="inherit"
         sx={{ ml: 2, minHeight: HEADER_HEIGHT }}
-        id="competitions-list-dropdown"
-        aria-controls={open ? "competitions-list" : undefined}
+        id={menuTitleId}
+        aria-controls={open ? menuCollapseId : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
@@ -51,13 +54,10 @@ const Dropdown = ({ items, isProfile }: DropdownProps) => {
       </Button>
       {nonSelectedItems.length > 0 && (
         <Menu
-          id="competitions-list"
+          id={menuCollapseId}
           anchorEl={anchorEl}
           open={open}
           onClose={handleClose}
-          MenuListProps={{
-            "aria-labelledby": "competitions-list-dropdown",
-          }}
           PaperProps={{
             style: isProfile
               ? {
