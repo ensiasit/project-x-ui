@@ -29,7 +29,7 @@ const SidenavListItem = ({ item, level }: SidenavListItemProps) => {
     backgroundColor:
       item.path === pathname
         ? palette.grey[palette.mode === "light" ? 200 : 800]
-        : "transparent  !important",
+        : "transparent",
     borderLeftColor: item.path === pathname ? "blue" : "transparent",
   };
 

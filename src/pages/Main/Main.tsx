@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider, Typography } from "@mui/material";
 
 import { lightTheme, darkTheme } from "../../helpers/theme.constans";
 import { Header, Sidenav, Content } from "../../components";
@@ -67,7 +67,9 @@ const Main = () => {
           },
         ]}
       />
-      <Content>Content goes here</Content>
+      <Content>
+        <Typography>Content goes here</Typography>
+      </Content>
     </ThemeProvider>
   );
 };

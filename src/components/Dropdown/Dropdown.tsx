@@ -4,6 +4,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { nanoid } from "nanoid";
 
+import { HEADER_HEIGHT } from "../../helpers/theme.constans";
+
 export interface DropdownItem {
   label: string;
   path: string;
@@ -36,7 +38,7 @@ const Dropdown = ({ items, isProfile }: DropdownProps) => {
     <>
       <Button
         color="inherit"
-        sx={{ ml: 2, minHeight: 64 }}
+        sx={{ ml: 2, minHeight: HEADER_HEIGHT }}
         id="competitions-list-dropdown"
         aria-controls={open ? "competitions-list" : undefined}
         aria-haspopup="true"

@@ -1,4 +1,5 @@
 import { AppBar, Toolbar, Button, Box, Divider, useTheme } from "@mui/material";
+import { HEADER_HEIGHT, SIDENAV_WIDTH } from "../../helpers/theme.constans";
 
 import Dropdown, { DropdownItem } from "../Dropdown/Dropdown";
 
@@ -19,13 +20,14 @@ const Header = ({ title, competitions, profile }: HeaderProps) => {
         border: 0,
         borderBottom: `1px solid ${palette.divider}`,
         backgroundImage: "none",
+        backgroundColor: palette.background.default,
       }}
     >
-      <Toolbar sx={{ padding: "0 !important" }}>
+      <Toolbar disableGutters>
         <Box sx={{ display: "flex", flexDirection: "row", flexGrow: 1 }}>
           <Button
             color="inherit"
-            sx={{ mr: 2, fontSize: typography.h6, width: 260, m: 0 }}
+            sx={{ mr: 2, fontSize: typography.h6, width: SIDENAV_WIDTH, m: 0 }}
           >
             {title}
           </Button>
@@ -33,7 +35,7 @@ const Header = ({ title, competitions, profile }: HeaderProps) => {
             orientation="vertical"
             variant="middle"
             flexItem
-            sx={{ height: 64, m: 0 }}
+            sx={{ height: HEADER_HEIGHT, m: 0 }}
           />
           <Dropdown items={competitions} isProfile={false} />
         </Box>

@@ -1,4 +1,5 @@
 import { Box, Drawer, useTheme } from "@mui/material";
+import { HEADER_HEIGHT, SIDENAV_WIDTH } from "../../helpers/theme.constans";
 import SideNavList from "./SidenavList";
 
 export interface ListItem {
@@ -21,10 +22,10 @@ const Sidenav = ({ items }: SidenavProps) => {
         open
         sx={{
           "& .MuiDrawer-paper": {
-            minWidth: 260,
-            width: 260,
-            height: "calc(100% - 64px)",
-            marginTop: "64px",
+            minWidth: SIDENAV_WIDTH,
+            width: SIDENAV_WIDTH,
+            height: `calc(100% - ${HEADER_HEIGHT})`,
+            marginTop: HEADER_HEIGHT,
             borderTop: `1px solid ${palette.divider}`,
           },
         }}

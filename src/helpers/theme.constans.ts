@@ -1,8 +1,13 @@
 import { createTheme, ThemeOptions } from "@mui/material";
 import { grey } from "@mui/material/colors";
+import { Shadows } from "@mui/material/styles/shadows";
+
+export const HEADER_HEIGHT = "64px";
+export const SIDENAV_WIDTH = "260px";
 
 const theme: Partial<ThemeOptions> = {
   typography: {
+    fontFamily: "'Open Sans', sans-serif ",
     body1: {
       fontSize: "1rem",
     },
@@ -11,7 +16,12 @@ const theme: Partial<ThemeOptions> = {
     },
     button: {
       fontSize: "1rem",
+      textTransform: "none",
     },
+  },
+  shadows: new Array(25).fill("none") as Shadows,
+  shape: {
+    borderRadius: 0,
   },
 };
 
@@ -20,8 +30,8 @@ export const lightTheme = createTheme({
   palette: {
     mode: "light",
     background: {
-      default: "white !important",
-      paper: "white !important",
+      default: "white",
+      paper: "white",
     },
   },
 });
@@ -31,8 +41,8 @@ export const darkTheme = createTheme({
   palette: {
     mode: "dark",
     background: {
-      default: "black !important",
-      paper: "black !important",
+      default: "black",
+      paper: "black",
     },
     divider: grey[800],
   },
