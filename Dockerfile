@@ -1,4 +1,3 @@
-# build environment
 FROM node:lts-alpine as BUILD_STAGE
 
 WORKDIR /app
