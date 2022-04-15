@@ -33,6 +33,12 @@ export const lightTheme = createTheme({
       default: "white",
       paper: "white",
     },
+    primary: {
+      main: "#0f62fe",
+    },
+    secondary: {
+      main: grey[800],
+    },
   },
 });
 
@@ -45,5 +51,11 @@ export const darkTheme = createTheme({
       paper: "black",
     },
     divider: grey[800],
+    primary: {
+      main: "#0f62fe",
+    },
+    secondary: {
+      main: grey[700],
+    },
   },
 });

@@ -1,19 +1,12 @@
-import { useState } from "react";
-import { ThemeProvider, Typography } from "@mui/material";
-
-import { lightTheme, darkTheme } from "../../helpers/theme.constans";
+import { ThemeProvider, Typography, useTheme } from "@mui/material";
 import { Header, Sidenav, Content } from "../../components";
 
-const Dashboard = () => {
-  const [theme, setTheme] = useState(lightTheme);
+interface DashboardProps {
+  toggleTheme: () => void;
+}
 
-  const toggleTheme = () => {
-    if (theme === lightTheme) {
-      setTheme(darkTheme);
-    } else {
-      setTheme(lightTheme);
-    }
-  };
+const Dashboard = ({ toggleTheme }: DashboardProps) => {
+  const theme = useTheme();
 
   return (
     <ThemeProvider theme={theme}>
