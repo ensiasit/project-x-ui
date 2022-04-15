@@ -4,7 +4,7 @@ import { ThemeProvider, Typography } from "@mui/material";
 import { lightTheme, darkTheme } from "../../helpers/theme.constans";
 import { Header, Sidenav, Content } from "../../components";
 
-const Main = () => {
+const Dashboard = () => {
   const [theme, setTheme] = useState(lightTheme);
 
   const toggleTheme = () => {
@@ -74,4 +74,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default Dashboard;
