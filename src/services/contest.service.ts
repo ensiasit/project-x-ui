@@ -1,7 +1,8 @@
 import { useQuery } from "react-query";
 import { UseQueryOptions } from "react-query/types/react/types";
 import { API_BASE_URL } from "../helpers/config.helper";
-import { getToken, Role } from "./security.service";
+import { Role } from "./security.service";
+import { fetchJson } from "../helpers/fetch.helper";
 
 const CONTESTS_BASE_URL = `${API_BASE_URL}/contests`;
 
@@ -11,53 +12,36 @@ export interface ContestDto {
 }
 
 const getContests = async (): Promise<ContestDto[]> => {
-  const response = await fetch(CONTESTS_BASE_URL);
-  const responseJson = await response.json();
-
-  if (response.status >= 400) {
-    throw new Error(responseJson.message);
-  }
-
-  return responseJson;
+  return fetchJson<ContestDto[]>({ path: CONTESTS_BASE_URL });
 };
 
-export const useGetContests = () => {
-  return useQuery<ContestDto[], Error>("getContests", getContests);
+export const useGetContests = (
+  options?: Omit<UseQueryOptions<ContestDto[], Error>, "queryKey" | "queryFn">,
+) => {
+  return useQuery<ContestDto[], Error>("getContests", getContests, options);
 };
 
-interface UserContestRole {
+export interface UserContestRole {
   role: Role;
   contest: ContestDto;
 }
 
-const getUserContests = async (): Promise<UserContestRole> => {
-  const token = getToken();
-
-  if (!token) {
-    throw new Error("No token available");
-  }
-
-  const response = await fetch(`${CONTESTS_BASE_URL}/current`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+const getUserContests = async (): Promise<UserContestRole[]> => {
+  return fetchJson<UserContestRole[]>({
+    path: `${CONTESTS_BASE_URL}/current`,
+    secure: true,
   });
-  const responseJson = await response.json();
-
-  if (response.status >= 400) {
-    throw new Error(responseJson.message);
-  }
-
-  return responseJson;
 };
 
 export const useGetUserContests = (
   options?: Omit<
-    UseQueryOptions<UserContestRole, Error>,
+    UseQueryOptions<UserContestRole[], Error>,
     "queryKey" | "queryFn"
   >,
 ) => {
-  return useQuery<UserContestRole, Error>("getUserContests", getUserContests, {
-    ...options,
-  });
+  return useQuery<UserContestRole[], Error>(
+    "getUserContests",
+    getUserContests,
+    options,
+  );
 };

@@ -1,8 +1,10 @@
 import { Typography, useTheme } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
 import { Content, Header, Loader, Sidenav } from "../../components";
-import { logout } from "../../services/security.service";
+import { logout, useGetCurrentUser } from "../../services/security.service";
 import { useGetUserContests } from "../../services/contest.service";
+import { mapUserContestRoleToDropdownItem } from "../../helpers/contest.helper";
 
 interface DashboardProps {
   toggleTheme: () => void;
@@ -11,41 +13,60 @@ interface DashboardProps {
 const Dashboard = ({ toggleTheme }: DashboardProps) => {
   const navigate = useNavigate();
   const { palette } = useTheme();
+  const { contestId } = useParams();
 
-  const getUserContests = useGetUserContests({ retry: 1, retryDelay: 0 });
+  const getCurrentUser = useGetCurrentUser();
+  const getUserContests = useGetUserContests({
+    enabled: getCurrentUser.isSuccess,
+  });
 
   const onSignOut = () => {
     logout();
     navigate("/signin");
   };
 
-  if (getUserContests.isError) {
-    navigate("/signin");
-  }
+  useEffect(() => {
+    if (getCurrentUser.isError) {
+      navigate("/signin");
+    }
+
+    if (
+      getUserContests.isSuccess &&
+      getUserContests.data.length > 0 &&
+      !contestId
+    ) {
+      navigate(`/dashboard/${getUserContests.data[0].contest.id}`);
+    }
+  }, [contestId, getCurrentUser.status, getUserContests.status]);
 
   if (getUserContests.isLoading) {
     return <Loader />;
   }
 
-  return getUserContests.isSuccess ? (
+  return getCurrentUser.isSuccess && getUserContests.isSuccess ? (
     <>
       <Header
         title="Project X"
-        competitions={[
-          { label: "ITHOLIC CPC 2022", path: "#", selected: true },
-          { label: "ITHOLIC CPC 2021", path: "#", selected: false },
-          { label: "ITHOLIC CPC 2023", path: "#", selected: false },
-        ]}
+        competitions={getUserContests.data.map((contestDto) =>
+          mapUserContestRoleToDropdownItem(
+            contestDto,
+            () => navigate(`/dashboard/${contestDto.contest.id}`),
+            contestDto.contest.id === Number(contestId),
+          ),
+        )}
         profile={[
-          { label: "John Doe", path: "#", selected: true },
-          { label: "Profile", path: "#", selected: false },
+          { label: getCurrentUser.data.username, selected: true },
+          {
+            label: "Profile",
+            selected: false,
+            onClick: () => navigate("/dashboard/profile"),
+          },
           {
             label: palette.mode === "light" ? "Dark mode" : "Light mode",
-            path: "#",
             selected: false,
             onClick: toggleTheme,
           },
-          { label: "Sign out", path: "#", selected: false, onClick: onSignOut },
+          { label: "Sign out", selected: false, onClick: onSignOut },
         ]}
       />
       <Sidenav

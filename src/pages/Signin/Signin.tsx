@@ -7,12 +7,11 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { Alert, Loader } from "../../components";
-import { useLogin } from "../../services/security.service";
-import { useGetUserContests } from "../../services/contest.service";
+import { useGetCurrentUser, useLogin } from "../../services/security.service";
 
 const Signin = () => {
   const [searchParams] = useSearchParams();
@@ -22,26 +21,28 @@ const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const getUserContests = useGetUserContests({ retry: 1, retryDelay: 0 });
+  const getCurrentUser = useGetCurrentUser();
   const login = useLogin();
 
   const onSignin = () => {
     login.mutate({ email, password });
   };
 
-  if (getUserContests.isSuccess) {
-    navigate("/dashboard");
-  }
+  useEffect(() => {
+    if (getCurrentUser.isSuccess) {
+      navigate("/dashboard");
+    }
 
-  if (getUserContests.isLoading) {
+    if (login.isSuccess) {
+      navigate("/dashboard");
+    }
+  }, [getCurrentUser.status, login.status]);
+
+  if (getCurrentUser.isLoading) {
     return <Loader />;
   }
 
-  if (login.isSuccess) {
-    navigate("/dashboard");
-  }
-
-  return getUserContests.isError ? (
+  return getCurrentUser.isError ? (
     <Box
       sx={{
         height: "100%",
