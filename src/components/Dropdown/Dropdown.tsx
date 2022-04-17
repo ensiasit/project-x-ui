@@ -8,7 +8,6 @@ import { HEADER_HEIGHT } from "../../helpers/theme.constans";
 
 export interface DropdownItem {
   label: string;
-  path: string;
   selected: boolean;
   onClick?: () => void;
 }

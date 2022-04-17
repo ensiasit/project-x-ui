@@ -21,13 +21,13 @@ export const useGetContests = (
   return useQuery<ContestDto[], Error>("getContests", getContests, options);
 };
 
-interface UserContestRole {
+export interface UserContestRole {
   role: Role;
   contest: ContestDto;
 }
 
-const getUserContests = async (): Promise<UserContestRole> => {
-  return fetchJson<UserContestRole>({
+const getUserContests = async (): Promise<UserContestRole[]> => {
+  return fetchJson<UserContestRole[]>({
     path: `${CONTESTS_BASE_URL}/current`,
     secure: true,
   });
@@ -35,11 +35,13 @@ const getUserContests = async (): Promise<UserContestRole> => {
 
 export const useGetUserContests = (
   options?: Omit<
-    UseQueryOptions<UserContestRole, Error>,
+    UseQueryOptions<UserContestRole[], Error>,
     "queryKey" | "queryFn"
   >,
 ) => {
-  return useQuery<UserContestRole, Error>("getUserContests", getUserContests, {
-    ...options,
-  });
+  return useQuery<UserContestRole[], Error>(
+    "getUserContests",
+    getUserContests,
+    options,
+  );
 };

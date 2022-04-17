@@ -24,12 +24,17 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <Routes>
           <Route path="/" element={<Signin />} />
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/signup" element={<Signup />} />
           <Route
             path="/dashboard"
             element={<Dashboard toggleTheme={toggleTheme} />}
           />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/dashboard/profile" element={<div>Profile</div>} />
+          <Route
+            path="/dashboard/:contestId"
+            element={<Dashboard toggleTheme={toggleTheme} />}
+          />
         </Routes>
       </ThemeProvider>
     </QueryClientProvider>

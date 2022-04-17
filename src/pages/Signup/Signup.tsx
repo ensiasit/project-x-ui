@@ -8,7 +8,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
@@ -51,16 +51,18 @@ const Signup = () => {
     });
   };
 
-  if (getCurrentUser.isSuccess) {
-    navigate("/dashboard");
-  }
+  useEffect(() => {
+    if (getCurrentUser.isSuccess) {
+      navigate("/dashboard");
+    }
+
+    if (register.isSuccess) {
+      navigate("/signin?fromSignup=1");
+    }
+  }, [getCurrentUser.status, register.status]);
 
   if (getCurrentUser.isLoading) {
     return <Loader />;
-  }
-
-  if (register.isSuccess) {
-    navigate("/signin?fromSignup=1");
   }
 
   if (getContests.isError) {

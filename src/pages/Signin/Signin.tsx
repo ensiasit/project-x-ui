@@ -7,7 +7,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { Alert, Loader } from "../../components";
@@ -28,16 +28,18 @@ const Signin = () => {
     login.mutate({ email, password });
   };
 
-  if (getCurrentUser.isSuccess) {
-    navigate("/dashboard");
-  }
+  useEffect(() => {
+    if (getCurrentUser.isSuccess) {
+      navigate("/dashboard");
+    }
+
+    if (login.isSuccess) {
+      navigate("/dashboard");
+    }
+  }, [getCurrentUser.status, login.status]);
 
   if (getCurrentUser.isLoading) {
     return <Loader />;
-  }
-
-  if (login.isSuccess) {
-    navigate("/dashboard");
   }
 
   return getCurrentUser.isError ? (
