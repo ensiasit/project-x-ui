@@ -1,22 +1,34 @@
-import { useState } from "react";
-import { ThemeProvider, Typography } from "@mui/material";
+import { Typography, useTheme } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Content, Header, Loader, Sidenav } from "../../components";
+import { logout } from "../../services/security.service";
+import { useGetUserContests } from "../../services/contest.service";
 
-import { lightTheme, darkTheme } from "../../helpers/theme.constans";
-import { Header, Sidenav, Content } from "../../components";
+interface DashboardProps {
+  toggleTheme: () => void;
+}
 
-const Main = () => {
-  const [theme, setTheme] = useState(lightTheme);
+const Dashboard = ({ toggleTheme }: DashboardProps) => {
+  const navigate = useNavigate();
+  const { palette } = useTheme();
 
-  const toggleTheme = () => {
-    if (theme === lightTheme) {
-      setTheme(darkTheme);
-    } else {
-      setTheme(lightTheme);
-    }
+  const getUserContests = useGetUserContests({ retry: 1, retryDelay: 0 });
+
+  const onSignOut = () => {
+    logout();
+    navigate("/signin");
   };
 
-  return (
-    <ThemeProvider theme={theme}>
+  if (getUserContests.isError) {
+    navigate("/signin");
+  }
+
+  if (getUserContests.isLoading) {
+    return <Loader />;
+  }
+
+  return getUserContests.isSuccess ? (
+    <>
       <Header
         title="Project X"
         competitions={[
@@ -28,12 +40,12 @@ const Main = () => {
           { label: "John Doe", path: "#", selected: true },
           { label: "Profile", path: "#", selected: false },
           {
-            label: theme.palette.mode === "light" ? "Dark mode" : "Light mode",
+            label: palette.mode === "light" ? "Dark mode" : "Light mode",
             path: "#",
             selected: false,
             onClick: toggleTheme,
           },
-          { label: "Sign out", path: "#", selected: false },
+          { label: "Sign out", path: "#", selected: false, onClick: onSignOut },
         ]}
       />
       <Sidenav
@@ -70,8 +82,8 @@ const Main = () => {
       <Content>
         <Typography>Content goes here</Typography>
       </Content>
-    </ThemeProvider>
-  );
+    </>
+  ) : null;
 };
 
-export default Main;
+export default Dashboard;
