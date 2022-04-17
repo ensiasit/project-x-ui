@@ -21,6 +21,7 @@
   "rules": {
     "no-use-before-define": "off",
     "no-shadow": "off",
+    "no-unused-vars": "off",
     "import/prefer-default-export": "off",
     "import/extensions": [
       "error",
@@ -32,6 +33,7 @@
     ],
     "@typescript-eslint/no-shadow": ["off"],
     "@typescript-eslint/no-use-before-define": ["error"],
+    "@typescript-eslint/no-unused-vars": "error",
     "react/jsx-filename-extension": ["warn", { "extensions": [".tsx"] }],
     "react/prop-types": "off",
     "react/function-component-definition": "off",

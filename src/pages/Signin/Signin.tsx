@@ -8,15 +8,40 @@ import {
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { LoadingButton } from "@mui/lab";
+import { Alert, Loader } from "../../components";
+import { useLogin } from "../../services/security.service";
+import { useGetUserContests } from "../../services/contest.service";
 
 const Signin = () => {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { palette, typography } = useTheme();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  return (
+  const getUserContests = useGetUserContests({ retry: 1, retryDelay: 0 });
+  const login = useLogin();
+
+  const onSignin = () => {
+    login.mutate({ email, password });
+  };
+
+  if (getUserContests.isSuccess) {
+    navigate("/dashboard");
+  }
+
+  if (getUserContests.isLoading) {
+    return <Loader />;
+  }
+
+  if (login.isSuccess) {
+    navigate("/dashboard");
+  }
+
+  return getUserContests.isError ? (
     <Box
       sx={{
         height: "100%",
@@ -33,6 +58,12 @@ const Signin = () => {
         <Grid item xs={2} md={3} lg={4} />
         <Grid item xs={8} md={6} lg={4}>
           <Stack spacing={2}>
+            {searchParams.get("fromSignup") && (
+              <Alert severity="success">You are registered with success</Alert>
+            )}
+            {login.isError && (
+              <Alert severity="error">Incorrect email or password</Alert>
+            )}
             <Box>
               <Typography
                 sx={{
@@ -70,9 +101,14 @@ const Signin = () => {
             </Box>
             <Grid container>
               <Grid item xs={6} sx={{ pr: 1 }}>
-                <Button variant="contained" fullWidth>
+                <LoadingButton
+                  loading={login.isLoading}
+                  variant="contained"
+                  fullWidth
+                  onClick={onSignin}
+                >
                   Sign in
-                </Button>
+                </LoadingButton>
               </Grid>
               <Grid item xs={6} sx={{ pl: 1 }}>
                 <Button
@@ -89,7 +125,7 @@ const Signin = () => {
         </Grid>
       </Grid>
     </Box>
-  );
+  ) : null;
 };
 
 export default Signin;

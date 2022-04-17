@@ -8,25 +8,69 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
+import { LoadingButton } from "@mui/lab";
+import {
+  useGetContests,
+  useGetUserContests,
+} from "../../services/contest.service";
+import { Loader, Alert } from "../../components";
+import { mapContestDtoToMenuItem } from "../../helpers/contest.helper";
+import { Role, useRegister } from "../../services/security.service";
 
 const Signup = () => {
   const navigate = useNavigate();
+
   const { palette, typography } = useTheme();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [contest, setContest] = useState("");
 
-  const contests = [
-    { label: "ITHOLIC CPC 2022", value: "itholic-cpc-2022" },
-    { label: "ITHOLIC CPC 2023", value: "itholic-cpc-2023" },
-  ];
+  const getUserContests = useGetUserContests({ retry: 1, retryDelay: 0 });
+  const register = useRegister();
+  const getContests = useGetContests();
 
-  return (
+  const contests = useMemo(
+    () => (getContests.data || []).map(mapContestDtoToMenuItem),
+    [getContests],
+  );
+
+  const onSignup = () => {
+    register.mutate({
+      name,
+      email,
+      password,
+      contestId: contest,
+      role: Role.ROLE_USER,
+    });
+  };
+
+  if (getUserContests.isSuccess) {
+    navigate("/dashboard");
+  }
+
+  if (getUserContests.isLoading) {
+    return <Loader />;
+  }
+
+  if (register.isSuccess) {
+    navigate("/signin?fromSignup=1");
+  }
+
+  if (getContests.isError) {
+    return <Alert severity="error">Could not fetch contests</Alert>;
+  }
+
+  if (getContests.isLoading) {
+    return <Loader />;
+  }
+
+  return getUserContests.isError ? (
     <Box
       sx={{
         height: "100%",
@@ -43,6 +87,9 @@ const Signup = () => {
         <Grid item xs={2} md={3} lg={4} />
         <Grid item xs={8} md={6} lg={4}>
           <Stack spacing={2}>
+            {register.isError && (
+              <Alert severity="error">{register.error.message}</Alert>
+            )}
             <Box>
               <Typography
                 sx={{
@@ -143,9 +190,14 @@ const Signup = () => {
             </Box>
             <Grid container>
               <Grid item xs={6} sx={{ pr: 1 }}>
-                <Button variant="contained" fullWidth>
+                <LoadingButton
+                  loading={register.isLoading}
+                  variant="contained"
+                  fullWidth
+                  onClick={onSignup}
+                >
                   Sign up
-                </Button>
+                </LoadingButton>
               </Grid>
               <Grid item xs={6} sx={{ pl: 1 }}>
                 <Button
@@ -162,7 +214,7 @@ const Signup = () => {
         </Grid>
       </Grid>
     </Box>
-  );
+  ) : null;
 };
 
 export default Signup;

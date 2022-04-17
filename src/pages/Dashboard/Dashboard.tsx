@@ -1,15 +1,34 @@
-import { ThemeProvider, Typography, useTheme } from "@mui/material";
-import { Header, Sidenav, Content } from "../../components";
+import { Typography, useTheme } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Content, Header, Loader, Sidenav } from "../../components";
+import { logout } from "../../services/security.service";
+import { useGetUserContests } from "../../services/contest.service";
 
 interface DashboardProps {
   toggleTheme: () => void;
 }
 
 const Dashboard = ({ toggleTheme }: DashboardProps) => {
-  const theme = useTheme();
+  const navigate = useNavigate();
+  const { palette } = useTheme();
 
-  return (
-    <ThemeProvider theme={theme}>
+  const getUserContests = useGetUserContests({ retry: 1, retryDelay: 0 });
+
+  const onSignOut = () => {
+    logout();
+    navigate("/signin");
+  };
+
+  if (getUserContests.isError) {
+    navigate("/signin");
+  }
+
+  if (getUserContests.isLoading) {
+    return <Loader />;
+  }
+
+  return getUserContests.isSuccess ? (
+    <>
       <Header
         title="Project X"
         competitions={[
@@ -21,12 +40,12 @@ const Dashboard = ({ toggleTheme }: DashboardProps) => {
           { label: "John Doe", path: "#", selected: true },
           { label: "Profile", path: "#", selected: false },
           {
-            label: theme.palette.mode === "light" ? "Dark mode" : "Light mode",
+            label: palette.mode === "light" ? "Dark mode" : "Light mode",
             path: "#",
             selected: false,
             onClick: toggleTheme,
           },
-          { label: "Sign out", path: "#", selected: false },
+          { label: "Sign out", path: "#", selected: false, onClick: onSignOut },
         ]}
       />
       <Sidenav
@@ -63,8 +82,8 @@ const Dashboard = ({ toggleTheme }: DashboardProps) => {
       <Content>
         <Typography>Content goes here</Typography>
       </Content>
-    </ThemeProvider>
-  );
+    </>
+  ) : null;
 };
 
 export default Dashboard;
