@@ -1,15 +1,17 @@
 import { AppBar, Toolbar, Button, Box, Divider, useTheme } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { HEADER_HEIGHT, SIDENAV_WIDTH } from "../../helpers/theme.constans";
 
 import Dropdown, { DropdownItem } from "../Dropdown/Dropdown";
 
-interface HeaderProps {
+export interface HeaderProps {
   title: string;
   competitions: DropdownItem[];
   profile: DropdownItem[];
 }
 
 const Header = ({ title, competitions, profile }: HeaderProps) => {
+  const navigate = useNavigate();
   const { palette, typography } = useTheme();
 
   return (
@@ -27,19 +29,30 @@ const Header = ({ title, competitions, profile }: HeaderProps) => {
         <Box sx={{ display: "flex", flexDirection: "row", flexGrow: 1 }}>
           <Button
             color="inherit"
-            sx={{ mr: 2, fontSize: typography.h6, width: SIDENAV_WIDTH, m: 0 }}
+            sx={{
+              mr: 2,
+              fontSize: typography.h6,
+              width: SIDENAV_WIDTH,
+              m: 0,
+              height: HEADER_HEIGHT,
+            }}
+            onClick={() => navigate("/dashboard")}
           >
             {title}
           </Button>
-          <Divider
-            orientation="vertical"
-            variant="middle"
-            flexItem
-            sx={{ height: HEADER_HEIGHT, m: 0 }}
-          />
-          <Dropdown items={competitions} isProfile={false} />
+          {competitions.length > 0 && (
+            <>
+              <Divider
+                orientation="vertical"
+                variant="middle"
+                flexItem
+                sx={{ height: HEADER_HEIGHT, m: 0 }}
+              />
+              <Dropdown items={competitions} isProfile={false} />
+            </>
+          )}
         </Box>
-        <Dropdown items={profile} isProfile />
+        {profile.length > 0 && <Dropdown items={profile} isProfile />}
       </Toolbar>
     </AppBar>
   );

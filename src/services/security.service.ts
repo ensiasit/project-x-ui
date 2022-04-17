@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "react-query";
 import { API_BASE_URL } from "../helpers/config.helper";
 import { fetchJson } from "../helpers/fetch.helper";
+import { UserDto } from "./user.service";
 
 const SECURITY_BASE_URL = `${API_BASE_URL}/auth`;
 
@@ -76,11 +77,6 @@ export const getToken = () => {
 export const logout = () => {
   localStorage.removeItem(TOKEN_LOCAL_STORAGE_KEY);
 };
-
-interface UserDto {
-  username: string;
-  email: string;
-}
 
 const getCurrentUser = async (): Promise<UserDto> => {
   return fetchJson<UserDto>({

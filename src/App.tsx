@@ -1,10 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { Dashboard, Signin, Signup } from "./pages";
+import { Dashboard, Profile, Signin, Signup } from "./pages";
 import { darkTheme, lightTheme } from "./helpers/theme.constans";
+import { GlobalContext, globalContext } from "./helpers/context.helper";
 
 const queryClient = new QueryClient();
 
@@ -19,25 +20,27 @@ const App = () => {
     }
   };
 
+  const globalContextValue = useMemo<GlobalContext>(() => {
+    return {
+      toggleTheme,
+    };
+  }, [theme]);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <Routes>
-          <Route path="/" element={<Signin />} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route
-            path="/dashboard"
-            element={<Dashboard toggleTheme={toggleTheme} />}
-          />
-          <Route path="/dashboard/profile" element={<div>Profile</div>} />
-          <Route
-            path="/dashboard/:contestId"
-            element={<Dashboard toggleTheme={toggleTheme} />}
-          />
-        </Routes>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <globalContext.Provider value={globalContextValue}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <Routes>
+            <Route path="/" element={<Signin />} />
+            <Route path="/signin" element={<Signin />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/profile" element={<Profile />} />
+            <Route path="/dashboard/:contestId" element={<Dashboard />} />
+          </Routes>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </globalContext.Provider>
   );
 };
 
