@@ -25,7 +25,7 @@ const Signup = () => {
 
   const { palette, typography } = useTheme();
 
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -42,7 +42,7 @@ const Signup = () => {
 
   const onSignup = () => {
     register.mutate({
-      name,
+      username,
       email,
       password,
       contestId: contest,
@@ -103,8 +103,8 @@ const Signup = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </Box>
             <Box>

@@ -23,6 +23,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <Routes>
+          <Route path="/" element={<Signin />} />
           <Route
             path="/dashboard"
             element={<Dashboard toggleTheme={toggleTheme} />}
