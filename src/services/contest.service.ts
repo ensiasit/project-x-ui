@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import { UseQueryOptions } from "react-query/types/react/types";
-import { API_BASE_URL } from "./config.service";
+import { API_BASE_URL } from "../helpers/config.helper";
 import { getToken, Role } from "./security.service";
 
 const CONTESTS_BASE_URL = `${API_BASE_URL}/contests`;

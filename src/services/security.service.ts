@@ -1,5 +1,5 @@
 import { useMutation } from "react-query";
-import { API_BASE_URL } from "./config.service";
+import { API_BASE_URL } from "../helpers/config.helper";
 
 const SECURITY_BASE_URL = `${API_BASE_URL}/auth`;
 

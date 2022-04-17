@@ -12,14 +12,18 @@ RUN npm install react-scripts@5.0.0 -g --silent
 
 COPY . ./
 
+ENV REACT_APP_API_BASE_URL=http://www.ensiasit.club/api/v1
+
 RUN npm run build
 
 ###
 
-FROM nginx:stable-alpine
+FROM node:lts-alpine
 
-COPY --from=BUILD_STAGE /app/build /usr/share/nginx/html
+RUN npm install -g serve
+
+COPY --from=BUILD_STAGE /app/build /build
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["serve", "-s", "-p", "80", "/build"]
