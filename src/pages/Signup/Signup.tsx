@@ -12,13 +12,14 @@ import { useMemo, useState } from "react";
 import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import {
-  useGetContests,
-  useGetUserContests,
-} from "../../services/contest.service";
-import { Loader, Alert } from "../../components";
+import { useGetContests } from "../../services/contest.service";
+import { Alert, Loader } from "../../components";
 import { mapContestDtoToMenuItem } from "../../helpers/contest.helper";
-import { Role, useRegister } from "../../services/security.service";
+import {
+  Role,
+  useGetCurrentUser,
+  useRegister,
+} from "../../services/security.service";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -31,9 +32,9 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [contest, setContest] = useState("");
 
-  const getUserContests = useGetUserContests({ retry: 1, retryDelay: 0 });
+  const getCurrentUser = useGetCurrentUser();
+  const getContests = useGetContests({ enabled: getCurrentUser.isError });
   const register = useRegister();
-  const getContests = useGetContests();
 
   const contests = useMemo(
     () => (getContests.data || []).map(mapContestDtoToMenuItem),
@@ -50,11 +51,11 @@ const Signup = () => {
     });
   };
 
-  if (getUserContests.isSuccess) {
+  if (getCurrentUser.isSuccess) {
     navigate("/dashboard");
   }
 
-  if (getUserContests.isLoading) {
+  if (getCurrentUser.isLoading) {
     return <Loader />;
   }
 
@@ -70,7 +71,7 @@ const Signup = () => {
     return <Loader />;
   }
 
-  return getUserContests.isError ? (
+  return getCurrentUser.isError ? (
     <Box
       sx={{
         height: "100%",

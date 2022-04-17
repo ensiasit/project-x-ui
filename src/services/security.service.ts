@@ -1,5 +1,6 @@
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { API_BASE_URL } from "../helpers/config.helper";
+import { fetchJson } from "../helpers/fetch.helper";
 
 const SECURITY_BASE_URL = `${API_BASE_URL}/auth`;
 
@@ -21,22 +22,18 @@ export enum Role {
 }
 
 const login = async (loginRequest: LoginRequest): Promise<LoginResponse> => {
-  const response = await fetch(`${SECURITY_BASE_URL}/login`, {
+  const response = await fetchJson<LoginResponse>({
+    path: `${SECURITY_BASE_URL}/login`,
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(loginRequest),
   });
-  const responseJson = await response.json();
 
-  if (response.status >= 400) {
-    throw new Error(responseJson.message);
-  }
+  localStorage.setItem(TOKEN_LOCAL_STORAGE_KEY, response.token);
 
-  localStorage.setItem(TOKEN_LOCAL_STORAGE_KEY, responseJson.token);
-
-  return responseJson;
+  return response;
 };
 
 export const useLogin = () => {
@@ -58,20 +55,14 @@ interface RegisterResponse {
 const register = async (
   registerRequest: RegisterRequest,
 ): Promise<RegisterResponse> => {
-  const response = await fetch(`${SECURITY_BASE_URL}/register`, {
+  return fetchJson<RegisterResponse>({
+    path: `${SECURITY_BASE_URL}/register`,
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(registerRequest),
   });
-  const responseJson = await response.json();
-
-  if (response.status >= 400) {
-    throw new Error(responseJson.message);
-  }
-
-  return responseJson;
 };
 
 export const useRegister = () => {
@@ -84,4 +75,23 @@ export const getToken = () => {
 
 export const logout = () => {
   localStorage.removeItem(TOKEN_LOCAL_STORAGE_KEY);
+};
+
+interface UserDto {
+  username: string;
+  email: string;
+}
+
+const getCurrentUser = async (): Promise<UserDto> => {
+  return fetchJson<UserDto>({
+    path: `${SECURITY_BASE_URL}/current`,
+    secure: true,
+  });
+};
+
+export const useGetCurrentUser = () => {
+  return useQuery<UserDto, Error>("getCurrentUser", getCurrentUser, {
+    retry: 1,
+    retryDelay: 0,
+  });
 };

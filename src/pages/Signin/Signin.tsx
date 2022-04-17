@@ -11,8 +11,7 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { Alert, Loader } from "../../components";
-import { useLogin } from "../../services/security.service";
-import { useGetUserContests } from "../../services/contest.service";
+import { useGetCurrentUser, useLogin } from "../../services/security.service";
 
 const Signin = () => {
   const [searchParams] = useSearchParams();
@@ -22,18 +21,18 @@ const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const getUserContests = useGetUserContests({ retry: 1, retryDelay: 0 });
+  const getCurrentUser = useGetCurrentUser();
   const login = useLogin();
 
   const onSignin = () => {
     login.mutate({ email, password });
   };
 
-  if (getUserContests.isSuccess) {
+  if (getCurrentUser.isSuccess) {
     navigate("/dashboard");
   }
 
-  if (getUserContests.isLoading) {
+  if (getCurrentUser.isLoading) {
     return <Loader />;
   }
 
@@ -41,7 +40,7 @@ const Signin = () => {
     navigate("/dashboard");
   }
 
-  return getUserContests.isError ? (
+  return getCurrentUser.isError ? (
     <Box
       sx={{
         height: "100%",
