@@ -37,7 +37,7 @@ const Profile = () => {
   }, [getCurrentUser.status]);
 
   const onUpdate = () => {
-    updateUser.mutate({ username, email, password });
+    updateUser.mutate({ username, email, password, admin: false });
   };
 
   if (getCurrentUser.isLoading) {
@@ -46,7 +46,7 @@ const Profile = () => {
 
   return getCurrentUser.isSuccess ? (
     <Layout
-      username={getCurrentUser.data.username}
+      currentUser={getCurrentUser.data}
       sideNavItems={[]}
       withCompetitionsList={false}
     >

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   ListItemButton,
@@ -19,9 +19,10 @@ interface SidenavListItemProps {
 }
 
 const SidenavListItem = ({ item, level }: SidenavListItemProps) => {
+  const navigate = useNavigate();
   const { pathname } = useLocation();
   const { palette } = useTheme();
-  const [isOpen, setIsOpen] = useState(item.path === pathname);
+  const [isOpen, setIsOpen] = useState(true);
 
   const itemStyle = {
     pl: 2 + 2 * level,
@@ -30,11 +31,18 @@ const SidenavListItem = ({ item, level }: SidenavListItemProps) => {
       item.path === pathname
         ? palette.grey[palette.mode === "light" ? 200 : 800]
         : "transparent",
-    borderLeftColor: item.path === pathname ? "blue" : "transparent",
+    borderLeftColor:
+      item.path === pathname ? palette.primary.main : "transparent",
   };
 
   return (
-    <Box>
+    <Box
+      onClick={() => {
+        if (item.path) {
+          navigate(item.path);
+        }
+      }}
+    >
       <ListItemButton
         sx={{
           ...itemStyle,

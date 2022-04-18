@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "react-query";
+import { UseMutationOptions } from "react-query/types/react/types";
 import { API_BASE_URL } from "../helpers/config.helper";
 import { fetchJson } from "../helpers/fetch.helper";
 import { UserDto } from "./user.service";
@@ -17,9 +18,9 @@ interface LoginResponse {
 }
 
 export enum Role {
-  ROLE_ADMIN,
-  ROLE_MODERATOR,
-  ROLE_USER,
+  ROLE_ADMIN = "ROLE_ADMIN",
+  ROLE_MODERATOR = "ROLE_MODERATOR",
+  ROLE_USER = "ROLE_USER",
 }
 
 const login = async (loginRequest: LoginRequest): Promise<LoginResponse> => {
@@ -66,8 +67,13 @@ const register = async (
   });
 };
 
-export const useRegister = () => {
-  return useMutation<RegisterResponse, Error, RegisterRequest>(register);
+export const useRegister = (
+  options?: UseMutationOptions<RegisterResponse, Error, RegisterRequest>,
+) => {
+  return useMutation<RegisterResponse, Error, RegisterRequest>(
+    register,
+    options,
+  );
 };
 
 export const getToken = () => {

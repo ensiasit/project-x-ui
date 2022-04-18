@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Button, Box, Divider, useTheme } from "@mui/material";
+import { AppBar, Box, Button, Divider, Toolbar, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { HEADER_HEIGHT, SIDENAV_WIDTH } from "../../helpers/theme.constans";
 
@@ -16,7 +16,7 @@ const Header = ({ title, competitions, profile }: HeaderProps) => {
 
   return (
     <AppBar
-      position="static"
+      position="sticky"
       color="default"
       sx={{
         border: 0,

@@ -1,24 +1,26 @@
 import { useTheme } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { ReactNode, useContext, useEffect } from "react";
+import { ReactNode, useContext } from "react";
 import { Content, Header, Loader, Sidenav } from "../index";
 import { logout } from "../../services/security.service";
 import { useGetUserContests } from "../../services/contest.service";
 import { mapUserContestRoleToDropdownItem } from "../../helpers/contest.helper";
 import { ListItem } from "../Sidenav/Sidenav";
 import { globalContext, GlobalContext } from "../../helpers/context.helper";
+import { UserDto } from "../../services/user.service";
+import { DropdownItem } from "../Dropdown/Dropdown";
 
 interface DashboardProps {
   withCompetitionsList: boolean;
   sideNavItems: ListItem[];
-  username: string;
+  currentUser: UserDto;
   children: ReactNode;
 }
 
 const Layout = ({
   withCompetitionsList,
   sideNavItems,
-  username,
+  currentUser,
   children,
 }: DashboardProps) => {
   const { toggleTheme } = useContext<GlobalContext>(globalContext);
@@ -35,28 +37,19 @@ const Layout = ({
     navigate("/signin");
   };
 
-  useEffect(() => {
-    if (
-      withCompetitionsList &&
-      getUserContests.isSuccess &&
-      getUserContests.data.length > 0 &&
-      !contestId
-    ) {
-      navigate(`/dashboard/${getUserContests.data[0].contest.id}`);
-    }
-  }, [contestId, getUserContests.status]);
-
   if (getUserContests.isLoading) {
     return <Loader />;
   }
 
-  const competitions =
+  const competitions: DropdownItem[] =
     withCompetitionsList && getUserContests.isSuccess
-      ? getUserContests.data.map((contestDto) =>
+      ? getUserContests.data.map((contestDto, index) =>
           mapUserContestRoleToDropdownItem(
             contestDto,
             () => navigate(`/dashboard/${contestDto.contest.id}`),
-            contestDto.contest.id === Number(contestId),
+            contestId
+              ? contestDto.contest.id === Number(contestId)
+              : index === 0,
           ),
         )
       : [];
@@ -67,7 +60,7 @@ const Layout = ({
         title="Project X"
         competitions={competitions}
         profile={[
-          { label: username, selected: true },
+          { label: currentUser.username, selected: true },
           {
             label: "Profile",
             selected: false,

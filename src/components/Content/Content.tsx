@@ -16,6 +16,7 @@ const Content = ({ withSideNav, children }: ContentProps) => {
     <Box
       sx={{
         marginLeft: withSideNav ? SIDENAV_WIDTH : 0,
+        overflowY: "auto",
         p: 3,
         // ${2 * (8 * 3)}px is for top and bottom padding. NB: p: 3 <=> p: (3 * 8)px.
         // Doesn't work without additional 1px retrieval :(

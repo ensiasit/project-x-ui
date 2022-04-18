@@ -31,7 +31,7 @@ export const fetchJson = async <R>({
   const responseJson = await response.json();
 
   if (response.status >= 400) {
-    throw Error;
+    throw new Error(responseJson.message);
   }
 
   return responseJson;

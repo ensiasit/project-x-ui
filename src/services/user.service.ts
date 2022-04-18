@@ -8,6 +8,7 @@ export interface UserDto {
   username: string;
   email: string;
   password: string;
+  admin: boolean;
 }
 
 const updateUser = async (userDto: UserDto): Promise<UserDto> => {

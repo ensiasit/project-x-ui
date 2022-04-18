@@ -1,10 +1,13 @@
-import { Typography } from "@mui/material";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout, Loader } from "../../components";
 import { useGetCurrentUser } from "../../services/security.service";
 
-const Dashboard = () => {
+interface DashboardProps {
+  children?: ReactNode;
+}
+
+const Dashboard = ({ children }: DashboardProps) => {
   const navigate = useNavigate();
   const getCurrentUser = useGetCurrentUser();
 
@@ -20,39 +23,23 @@ const Dashboard = () => {
 
   return getCurrentUser.isSuccess ? (
     <Layout
-      username={getCurrentUser.data.username}
+      currentUser={getCurrentUser.data}
       withCompetitionsList
       sideNavItems={[
         {
-          label: "Category 1",
-          path: "#",
-          subitems: [
-            {
-              label: "Category 1.1",
-              path: "",
-              subitems: [],
-            },
-          ],
-        },
-        {
-          label: "Category 2",
+          label: "Manage",
           path: "",
           subitems: [
             {
-              label: "Category 2.1",
-              path: "/",
-              subitems: [],
-            },
-            {
-              label: "Category 2.2",
-              path: "",
+              label: "Competitions",
+              path: "/dashboard/manage/competitions",
               subitems: [],
             },
           ],
         },
       ]}
     >
-      <Typography>Content goes here</Typography>
+      {children}
     </Layout>
   ) : null;
 };
