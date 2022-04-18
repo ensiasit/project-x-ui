@@ -34,7 +34,11 @@ const Signup = () => {
 
   const getCurrentUser = useGetCurrentUser();
   const getContests = useGetContests({ enabled: getCurrentUser.isError });
-  const register = useRegister();
+  const register = useRegister({
+    onSuccess: () => {
+      navigate("/signin?success=1");
+    },
+  });
 
   const contests = useMemo(
     () => (getContests.data || []).map(mapContestDtoToMenuItem),
@@ -54,10 +58,6 @@ const Signup = () => {
   useEffect(() => {
     if (getCurrentUser.isSuccess) {
       navigate("/dashboard");
-    }
-
-    if (register.isSuccess) {
-      navigate("/signin?fromSignup=1");
     }
   }, [getCurrentUser.status, register.status]);
 

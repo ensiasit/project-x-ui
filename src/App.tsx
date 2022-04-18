@@ -3,9 +3,17 @@ import { Route, Routes } from "react-router-dom";
 import { useMemo, useState } from "react";
 import { ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { Dashboard, Profile, Signin, Signup } from "./pages";
+import {
+  Competitions,
+  CompetitionsAdd,
+  Dashboard,
+  Profile,
+  Signin,
+  Signup,
+} from "./pages";
 import { darkTheme, lightTheme } from "./helpers/theme.constans";
 import { GlobalContext, globalContext } from "./helpers/context.helper";
+import CompetitionsEdit from "./pages/Manage/Competitions/CompetitionsEdit";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +44,18 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/profile" element={<Profile />} />
+            <Route
+              path="/dashboard/manage/competitions"
+              element={<Competitions />}
+            />
+            <Route
+              path="/dashboard/manage/competitions/add"
+              element={<CompetitionsAdd />}
+            />
+            <Route
+              path="/dashboard/manage/competitions/edit/:competitionId"
+              element={<CompetitionsEdit />}
+            />
             <Route path="/dashboard/:contestId" element={<Dashboard />} />
           </Routes>
         </ThemeProvider>
