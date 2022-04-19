@@ -35,6 +35,11 @@ const Dashboard = ({ children }: DashboardProps) => {
               path: "/dashboard/manage/competitions",
               subitems: [],
             },
+            {
+              label: "Affiliations",
+              path: "/dashboard/manage/affiliations",
+              subitems: [],
+            },
           ],
         },
       ]}
