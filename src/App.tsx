@@ -4,6 +4,9 @@ import { useMemo, useState } from "react";
 import { ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "react-query";
 import {
+  Affiliations,
+  AffiliationsAdd,
+  AffiliationsEdit,
   Competitions,
   CompetitionsAdd,
   Dashboard,
@@ -55,6 +58,18 @@ const App = () => {
             <Route
               path="/dashboard/manage/competitions/edit/:competitionId"
               element={<CompetitionsEdit />}
+            />
+            <Route
+              path="/dashboard/manage/affiliations"
+              element={<Affiliations />}
+            />
+            <Route
+              path="/dashboard/manage/affiliations/add"
+              element={<AffiliationsAdd />}
+            />
+            <Route
+              path="/dashboard/manage/affiliations/edit/:affiliationId"
+              element={<AffiliationsEdit />}
             />
             <Route path="/dashboard/:contestId" element={<Dashboard />} />
           </Routes>

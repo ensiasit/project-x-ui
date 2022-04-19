@@ -1,19 +1,19 @@
-import { Box, Button, Stack, TextField } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { useQueryClient } from "react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useQueryClient } from "react-query";
+import { Box, Button, Stack, TextField } from "@mui/material";
+import { Add } from "@mui/icons-material";
 import { Dashboard } from "../../index";
-import { Role, useGetCurrentUser } from "../../../services/security.service";
+import { useGetCurrentUser } from "../../../services/security.service";
 import { Alert, Loader, Table } from "../../../components";
-import {
-  useDeleteContest,
-  useGetUserContests,
-} from "../../../services/contest.service";
 import { TableColumn } from "../../../components/Table/Table";
 import { filter } from "../../../helpers/table.helper";
+import {
+  useDeleteAffiliation,
+  useGetAffiliations,
+} from "../../../services/affiliation.service";
 
-const Competitions = () => {
+const Affiliations = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -21,10 +21,12 @@ const Competitions = () => {
   const [search, setSearch] = useState("");
 
   const currentUser = useGetCurrentUser();
-  const userContests = useGetUserContests({ enabled: currentUser.isSuccess });
-  const deleteContest = useDeleteContest({
+  const getAffiliations = useGetAffiliations({
+    enabled: currentUser.isSuccess,
+  });
+  const deleteAffiliation = useDeleteAffiliation({
     onSuccess: () => {
-      queryClient.invalidateQueries("getUserContests");
+      queryClient.invalidateQueries("getAffiliations");
     },
   });
 
@@ -32,31 +34,28 @@ const Competitions = () => {
     if (currentUser.isError) {
       navigate("/signin");
     }
-  }, [currentUser.status]);
+  }, [currentUser.status, deleteAffiliation.status]);
 
-  if (currentUser.isLoading || userContests.isLoading) {
+  if (currentUser.isLoading || deleteAffiliation.isLoading) {
     return <Loader />;
   }
 
-  if (userContests.isError) {
+  if (getAffiliations.isError) {
     return <Alert severity="error">Could not fetch contests</Alert>;
   }
 
   const cols: TableColumn[] = [
     { id: "name", label: "Name", type: "string" },
-    { id: "startTime", label: "Start time (UTC)", type: "date" },
-    { id: "endTime", label: "End time (UTC)", type: "date" },
-    { id: "freezeTime", label: "Freeze time (UTC)", type: "date" },
-    { id: "unfreezeTime", label: "Unfreeze time (UTC)", type: "date" },
-    { id: "publicScoreboard", label: "Public scoreboard", type: "boolean" },
+    { id: "country", label: "Country", type: "country" },
+    { id: "logo", label: "Logo", type: "image" },
   ];
 
-  const rows = userContests.isSuccess
-    ? userContests.data.map(({ role, contest }) => {
+  const rows = getAffiliations.isSuccess
+    ? getAffiliations.data.map((affiliation) => {
         return {
-          ...contest,
-          canEdit: role === Role.ROLE_ADMIN || role === Role.ROLE_MODERATOR,
-          canDelete: role === Role.ROLE_ADMIN || role === Role.ROLE_MODERATOR,
+          ...affiliation,
+          canEdit: currentUser.isSuccess ? currentUser.data.admin : false,
+          canDelete: currentUser.isSuccess ? currentUser.data.admin : false,
         };
       })
     : [];
@@ -64,24 +63,24 @@ const Competitions = () => {
   const filteredRows = filter(rows, search);
 
   const onRowDelete = (id: number) => {
-    deleteContest.mutate(id);
+    deleteAffiliation.mutate(id);
   };
 
   const onRowUpdate = (id: number) => {
-    navigate(`/dashboard/manage/competitions/edit/${id}`);
+    navigate(`/dashboard/manage/affiliations/edit/${id}`);
   };
 
-  return currentUser.isSuccess && userContests.isSuccess ? (
+  return currentUser.isSuccess && getAffiliations.isSuccess ? (
     <Dashboard>
       <Stack spacing={2}>
-        {deleteContest.isSuccess && (
+        {deleteAffiliation.isSuccess && (
           <Alert severity="success">Competition deleted with success.</Alert>
         )}
-        {deleteContest.isError && (
+        {deleteAffiliation.isError && (
           <Alert severity="error">Could not delete competition.</Alert>
         )}
         {searchParams.get("success") && (
-          <Alert severity="success">Competition created with success.</Alert>
+          <Alert severity="success">Affiliation created with success.</Alert>
         )}
         {currentUser.data.admin && (
           <Box sx={{ display: "flex" }}>
@@ -94,10 +93,10 @@ const Competitions = () => {
             />
             <Button
               variant="contained"
-              onClick={() => navigate("/dashboard/manage/competitions/add")}
+              onClick={() => navigate("/dashboard/manage/affiliations/add")}
             >
               <Add fontSize="small" sx={{ mr: 1 }} />
-              Add contest
+              Add affiliation
             </Button>
           </Box>
         )}
@@ -112,4 +111,4 @@ const Competitions = () => {
   ) : null;
 };
 
-export default Competitions;
+export default Affiliations;

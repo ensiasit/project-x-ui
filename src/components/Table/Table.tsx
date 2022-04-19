@@ -10,10 +10,18 @@ import {
 } from "@mui/material";
 import { nanoid } from "nanoid";
 import { Delete, Edit } from "@mui/icons-material";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, ReactNode, useState } from "react";
+import ReactCountryFlag from "react-country-flag";
 import { formatToUTC } from "../../helpers/date.helper";
+import { Country } from "../../helpers/country.helper";
 
-type TableColumnType = "string" | "numeric" | "boolean" | "date";
+type TableColumnType =
+  | "string"
+  | "numeric"
+  | "boolean"
+  | "date"
+  | "country"
+  | "image";
 
 export interface TableColumn {
   id: string;
@@ -36,13 +44,32 @@ const Table = ({ cols, rows, onRowDelete, onRowUpdate }: TableProps) => {
     return type === "numeric" ? "right" : "left";
   };
 
-  const renderCell = (value: unknown, type: TableColumnType): string => {
+  const renderCell = (value: unknown, type: TableColumnType): ReactNode => {
     if (type === "string" || type === "numeric") {
       return String(value);
     }
 
     if (type === "date") {
       return formatToUTC(value as string);
+    }
+
+    if (type === "country") {
+      return (
+        <span>
+          <ReactCountryFlag countryCode={value as string} />{" "}
+          {Country[value as keyof typeof Country]}
+        </span>
+      );
+    }
+
+    if (type === "image") {
+      return value ? (
+        <img
+          src={`data:image/jpeg;base64,${value}`}
+          alt="logo"
+          style={{ maxWidth: "70px", maxHeight: "50px" }}
+        />
+      ) : null;
     }
 
     return value ? "True" : "False";

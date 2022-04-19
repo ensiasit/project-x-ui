@@ -78,8 +78,10 @@ const deleteContest = async (id: number): Promise<ContestDto> => {
   });
 };
 
-export const useDeleteContest = () => {
-  return useMutation<ContestDto, Error, number>(deleteContest);
+export const useDeleteContest = (
+  options?: UseMutationOptions<ContestDto, Error, number>,
+) => {
+  return useMutation<ContestDto, Error, number>(deleteContest, options);
 };
 
 const getContest = async (contestId: number): Promise<ContestDto> => {

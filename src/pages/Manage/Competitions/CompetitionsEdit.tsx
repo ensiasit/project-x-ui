@@ -60,7 +60,7 @@ const CompetitionsEdit = () => {
       setUnfreezeTime(getContest.data.unfreezeTime);
       setPublicScoreboard(getContest.data.publicScoreboard);
     }
-  }, [currentUser.status, updateContest.status, getContest.status]);
+  }, [currentUser.status, getContest.status]);
 
   const onAdd = () => {
     updateContest.mutate({

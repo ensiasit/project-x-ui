@@ -35,7 +35,6 @@ const CompetitionsAdd = () => {
   const createContest = useCreateContest({
     onSuccess: () => {
       queryClient.invalidateQueries("getContests");
-      queryClient.invalidateQueries("getContest");
       navigate("/dashboard/manage/competitions?success=1");
     },
   });
@@ -44,7 +43,7 @@ const CompetitionsAdd = () => {
     if (currentUser.isError) {
       navigate("/signin");
     }
-  }, [currentUser.status, createContest.status]);
+  }, [currentUser.status]);
 
   const onAdd = () => {
     createContest.mutate({
