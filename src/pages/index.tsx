@@ -1,10 +1,9 @@
-export { default as Dashboard } from "./Dashboard/Dashboard";
 export { default as Signin } from "./Signin/Signin";
 export { default as Signup } from "./Signup/Signup";
 export { default as Profile } from "./Profile/Profile";
-export { default as Competitions } from "./Manage/Competitions/Competitions";
-export { default as CompetitionsAdd } from "./Manage/Competitions/CompetitionsAdd";
-export { default as CompetitionsEdit } from "./Manage/Competitions/CompetitionsEdit";
+export { default as Contests } from "./Manage/Contests/Contests";
+export { default as ContestsAdd } from "./Manage/Contests/ContestsAdd";
+export { default as ContestsEdit } from "./Manage/Contests/ContestsEdit";
 export { default as Affiliations } from "./Manage/Affiliations/Affiliations";
 export { default as AffiliationsAdd } from "./Manage/Affiliations/AffiliationsAdd";
 export { default as AffiliationsEdit } from "./Manage/Affiliations/AffiliationsEdit";

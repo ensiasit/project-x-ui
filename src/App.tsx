@@ -7,16 +7,16 @@ import {
   Affiliations,
   AffiliationsAdd,
   AffiliationsEdit,
-  Competitions,
-  CompetitionsAdd,
-  Dashboard,
+  Contests,
+  ContestsAdd,
   Profile,
   Signin,
   Signup,
 } from "./pages";
 import { darkTheme, lightTheme } from "./helpers/theme.constans";
 import { GlobalContext, globalContext } from "./helpers/context.helper";
-import CompetitionsEdit from "./pages/Manage/Competitions/CompetitionsEdit";
+import ContestsEdit from "./pages/Manage/Contests/ContestsEdit";
+import { Layout } from "./components";
 
 const queryClient = new QueryClient();
 
@@ -38,44 +38,39 @@ const App = () => {
   }, [theme]);
 
   return (
-    <globalContext.Provider value={globalContextValue}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <globalContext.Provider value={globalContextValue}>
         <ThemeProvider theme={theme}>
           <Routes>
-            <Route path="/" element={<Signin />} />
             <Route path="/signin" element={<Signin />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/dashboard/profile" element={<Profile />} />
-            <Route
-              path="/dashboard/manage/competitions"
-              element={<Competitions />}
-            />
-            <Route
-              path="/dashboard/manage/competitions/add"
-              element={<CompetitionsAdd />}
-            />
-            <Route
-              path="/dashboard/manage/competitions/edit/:competitionId"
-              element={<CompetitionsEdit />}
-            />
-            <Route
-              path="/dashboard/manage/affiliations"
-              element={<Affiliations />}
-            />
-            <Route
-              path="/dashboard/manage/affiliations/add"
-              element={<AffiliationsAdd />}
-            />
-            <Route
-              path="/dashboard/manage/affiliations/edit/:affiliationId"
-              element={<AffiliationsEdit />}
-            />
-            <Route path="/dashboard/:contestId" element={<Dashboard />} />
+
+            <Route path="/dashboard" element={<Layout />}>
+              <Route path=":contestId" element={null} />
+
+              <Route path="profile" element={<Profile />} />
+
+              <Route path="manage/competitions" element={<Contests />} />
+              <Route path="manage/competitions/add" element={<ContestsAdd />} />
+              <Route
+                path="manage/competitions/edit/:contestId"
+                element={<ContestsEdit />}
+              />
+
+              <Route path="manage/affiliations" element={<Affiliations />} />
+              <Route
+                path="manage/affiliations/add"
+                element={<AffiliationsAdd />}
+              />
+              <Route
+                path="manage/affiliations/edit/:affiliationId"
+                element={<AffiliationsEdit />}
+              />
+            </Route>
           </Routes>
         </ThemeProvider>
-      </QueryClientProvider>
-    </globalContext.Provider>
+      </globalContext.Provider>
+    </QueryClientProvider>
   );
 };
 

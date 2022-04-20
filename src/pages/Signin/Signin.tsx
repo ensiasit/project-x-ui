@@ -7,11 +7,12 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { Alert, Loader } from "../../components";
-import { useGetCurrentUser, useLogin } from "../../services/security.service";
+import { useLogin } from "../../services/security.service";
+import { useCurrentUser } from "../../helpers/security.helper";
 
 const Signin = () => {
   const [searchParams] = useSearchParams();
@@ -21,28 +22,22 @@ const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const getCurrentUser = useGetCurrentUser();
-  const login = useLogin();
+  const currentUser = useCurrentUser(false);
+  const login = useLogin({
+    onSuccess: () => {
+      navigate("/dashboard");
+    },
+  });
 
   const onSignin = () => {
     login.mutate({ email, password });
   };
 
-  useEffect(() => {
-    if (getCurrentUser.isSuccess) {
-      navigate("/dashboard");
-    }
-
-    if (login.isSuccess) {
-      navigate("/dashboard");
-    }
-  }, [getCurrentUser.status, login.status]);
-
-  if (getCurrentUser.isLoading) {
+  if (currentUser.isLoading) {
     return <Loader />;
   }
 
-  return getCurrentUser.isError ? (
+  return currentUser.isError ? (
     <Box
       sx={{
         height: "100%",
@@ -59,8 +54,13 @@ const Signin = () => {
         <Grid item xs={2} md={3} lg={4} />
         <Grid item xs={8} md={6} lg={4}>
           <Stack spacing={2}>
-            {searchParams.get("fromSignup") && (
+            {searchParams.get("success") && (
               <Alert severity="success">You are registered with success</Alert>
+            )}
+            {searchParams.get("error") && (
+              <Alert severity="error">
+                Session expired. Login to have access.
+              </Alert>
             )}
             {login.isError && (
               <Alert severity="error">Incorrect email or password</Alert>

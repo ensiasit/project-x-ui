@@ -1,17 +1,16 @@
 import { useQueryClient } from "react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { Dashboard } from "../../index";
-import { useGetCurrentUser } from "../../../services/security.service";
-import { Alert, Loader, Table } from "../../../components";
+import { Alert, Error, Loader, Table } from "../../../components";
 import { TableColumn } from "../../../components/Table/Table";
 import { filter } from "../../../helpers/table.helper";
 import {
   useDeleteAffiliation,
   useGetAffiliations,
 } from "../../../services/affiliation.service";
+import { useCurrentUser } from "../../../helpers/security.helper";
 
 const Affiliations = () => {
   const queryClient = useQueryClient();
@@ -20,8 +19,8 @@ const Affiliations = () => {
 
   const [search, setSearch] = useState("");
 
-  const currentUser = useGetCurrentUser();
-  const getAffiliations = useGetAffiliations({
+  const currentUser = useCurrentUser(true);
+  const affiliations = useGetAffiliations({
     enabled: currentUser.isSuccess,
   });
   const deleteAffiliation = useDeleteAffiliation({
@@ -30,18 +29,12 @@ const Affiliations = () => {
     },
   });
 
-  useEffect(() => {
-    if (currentUser.isError) {
-      navigate("/signin");
-    }
-  }, [currentUser.status, deleteAffiliation.status]);
-
   if (currentUser.isLoading || deleteAffiliation.isLoading) {
     return <Loader />;
   }
 
-  if (getAffiliations.isError) {
-    return <Alert severity="error">Could not fetch contests</Alert>;
+  if (affiliations.isError) {
+    return <Error message="Could not fetch contests" />;
   }
 
   const cols: TableColumn[] = [
@@ -50,8 +43,8 @@ const Affiliations = () => {
     { id: "logo", label: "Logo", type: "image" },
   ];
 
-  const rows = getAffiliations.isSuccess
-    ? getAffiliations.data.map((affiliation) => {
+  const rows = affiliations.isSuccess
+    ? affiliations.data.map((affiliation) => {
         return {
           ...affiliation,
           canEdit: currentUser.isSuccess ? currentUser.data.admin : false,
@@ -70,44 +63,39 @@ const Affiliations = () => {
     navigate(`/dashboard/manage/affiliations/edit/${id}`);
   };
 
-  return currentUser.isSuccess && getAffiliations.isSuccess ? (
-    <Dashboard>
-      <Stack spacing={2}>
-        {deleteAffiliation.isSuccess && (
-          <Alert severity="success">Competition deleted with success.</Alert>
-        )}
-        {deleteAffiliation.isError && (
-          <Alert severity="error">Could not delete competition.</Alert>
-        )}
-        {searchParams.get("success") && (
-          <Alert severity="success">Affiliation created with success.</Alert>
-        )}
-        {currentUser.data.admin && (
-          <Box sx={{ display: "flex" }}>
-            <TextField
-              sx={{ flexGrow: 1, pr: 2 }}
-              placeholder="Filter competitions"
-              size="small"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <Button
-              variant="contained"
-              onClick={() => navigate("/dashboard/manage/affiliations/add")}
-            >
-              <Add fontSize="small" sx={{ mr: 1 }} />
-              Add affiliation
-            </Button>
-          </Box>
-        )}
-        <Table
-          cols={cols}
-          rows={filteredRows}
-          onRowDelete={onRowDelete}
-          onRowUpdate={onRowUpdate}
-        />
-      </Stack>
-    </Dashboard>
+  return currentUser.isSuccess && affiliations.isSuccess ? (
+    <Stack spacing={2}>
+      {deleteAffiliation.isError && (
+        <Alert severity="error">Could not delete competition.</Alert>
+      )}
+      {searchParams.get("success") && (
+        <Alert severity="success">Affiliation created with success.</Alert>
+      )}
+      {currentUser.data.admin && (
+        <Box sx={{ display: "flex" }}>
+          <TextField
+            sx={{ flexGrow: 1, pr: 2 }}
+            placeholder="Filter competitions"
+            size="small"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            onClick={() => navigate("/dashboard/manage/affiliations/add")}
+          >
+            <Add fontSize="small" sx={{ mr: 1 }} />
+            Add affiliation
+          </Button>
+        </Box>
+      )}
+      <Table
+        cols={cols}
+        rows={filteredRows}
+        onRowDelete={onRowDelete}
+        onRowUpdate={onRowUpdate}
+      />
+    </Stack>
   ) : null;
 };
 

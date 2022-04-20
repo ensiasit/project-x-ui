@@ -31,7 +31,11 @@ const Dropdown = ({ name, items, isProfile }: DropdownProps) => {
     setAnchorEl(null);
   };
 
-  const selectedItem = items.find(({ selected }) => selected);
+  const selectedItem = items.find(({ selected }) => selected) || {
+    id: "",
+    label: "Select a contest",
+    selected: true,
+  };
   const nonSelectedItems = items.filter(({ selected }) => !selected);
 
   const menuTitleId = `menu-title-${name}`;
@@ -64,7 +68,7 @@ const Dropdown = ({ name, items, isProfile }: DropdownProps) => {
                   position: "fixed",
                   right: 0,
                   border: `1px solid ${palette.divider}`,
-                  minWidth: 140,
+                  minWidth: 200,
                 }
               : {
                   border: `1px solid ${palette.divider}`,
