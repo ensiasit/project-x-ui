@@ -8,7 +8,6 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
-import { nanoid } from "nanoid";
 import { Delete, Edit } from "@mui/icons-material";
 import { ChangeEvent, ReactNode, useState } from "react";
 import ReactCountryFlag from "react-country-flag";
@@ -89,8 +88,8 @@ const Table = ({ cols, rows, onRowDelete, onRowUpdate }: TableProps) => {
       <MUITable>
         <TableHead>
           <TableRow>
-            {cols.map(({ label, type }) => (
-              <TableCell key={nanoid()} align={getColumnAlign(type)}>
+            {cols.map(({ id, label, type }) => (
+              <TableCell key={id} align={getColumnAlign(type)}>
                 {label}
               </TableCell>
             ))}
@@ -101,9 +100,9 @@ const Table = ({ cols, rows, onRowDelete, onRowUpdate }: TableProps) => {
           {rows
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((row) => (
-              <TableRow key={nanoid()}>
+              <TableRow key={row.id as string}>
                 {cols.map(({ id, type }) => (
-                  <TableCell key={nanoid()} align={getColumnAlign(type)}>
+                  <TableCell key={id} align={getColumnAlign(type)}>
                     {renderCell(row[id], type)}
                   </TableCell>
                 ))}

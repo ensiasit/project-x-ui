@@ -12,7 +12,6 @@ import {
 import { LoadingButton } from "@mui/lab";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
-import { nanoid } from "nanoid";
 import ReactCountryFlag from "react-country-flag";
 import { useGetCurrentUser } from "../../../services/security.service";
 import { Alert, Loader } from "../../../components";
@@ -105,7 +104,7 @@ const AffiliationsAdd = () => {
                   onChange={(e) => setCountry(e.target.value)}
                 >
                   {Object.entries(Country).map(([key, value]) => (
-                    <MenuItem key={nanoid()} value={key}>
+                    <MenuItem key={key} value={key}>
                       <ReactCountryFlag
                         countryCode={key}
                         style={{ marginRight: "5px" }}

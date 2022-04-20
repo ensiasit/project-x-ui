@@ -11,7 +11,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { nanoid } from "nanoid";
 import ReactCountryFlag from "react-country-flag";
 import { LoadingButton } from "@mui/lab";
 import { useGetCurrentUser } from "../../../services/security.service";
@@ -121,7 +120,7 @@ const AffiliationsEdit = () => {
                   onChange={(e) => setCountry(e.target.value)}
                 >
                   {Object.entries(Country).map(([key, value]) => (
-                    <MenuItem key={nanoid()} value={key}>
+                    <MenuItem key={key} value={key}>
                       <ReactCountryFlag
                         countryCode={key}
                         style={{ marginRight: "5px" }}

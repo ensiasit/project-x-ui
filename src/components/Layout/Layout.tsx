@@ -60,18 +60,20 @@ const Layout = ({
         title="Project X"
         competitions={competitions}
         profile={[
-          { label: currentUser.username, selected: true },
+          { id: "1", label: currentUser.username, selected: true },
           {
+            id: "2",
             label: "Profile",
             selected: false,
             onClick: () => navigate("/dashboard/profile"),
           },
           {
+            id: "3",
             label: palette.mode === "light" ? "Dark mode" : "Light mode",
             selected: false,
             onClick: toggleTheme,
           },
-          { label: "Sign out", selected: false, onClick: onSignOut },
+          { id: "4", label: "Sign out", selected: false, onClick: onSignOut },
         ]}
       />
       {sideNavItems.length > 0 && <Sidenav items={sideNavItems} />}
