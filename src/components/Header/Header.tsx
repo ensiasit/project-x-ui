@@ -48,11 +48,17 @@ const Header = ({ title, competitions, profile }: HeaderProps) => {
                 flexItem
                 sx={{ height: HEADER_HEIGHT, m: 0 }}
               />
-              <Dropdown items={competitions} isProfile={false} />
+              <Dropdown
+                name="competitions"
+                items={competitions}
+                isProfile={false}
+              />
             </>
           )}
         </Box>
-        {profile.length > 0 && <Dropdown items={profile} isProfile />}
+        {profile.length > 0 && (
+          <Dropdown name="profile" items={profile} isProfile />
+        )}
       </Toolbar>
     </AppBar>
   );

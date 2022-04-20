@@ -9,7 +9,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { useGetContests } from "../../services/contest.service";
@@ -185,7 +184,7 @@ const Signup = () => {
                 onChange={(e) => setContest(e.target.value)}
               >
                 {contests.map(({ label, value }) => (
-                  <MenuItem key={nanoid()} value={value}>
+                  <MenuItem key={value} value={value}>
                     {label}
                   </MenuItem>
                 ))}

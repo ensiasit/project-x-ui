@@ -3,6 +3,7 @@ import { HEADER_HEIGHT, SIDENAV_WIDTH } from "../../helpers/theme.constans";
 import SideNavList from "./SidenavList";
 
 export interface ListItem {
+  id: string;
   label: string;
   path: string;
   subitems: ListItem[];

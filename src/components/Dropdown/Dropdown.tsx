@@ -1,23 +1,24 @@
 import React, { useState } from "react";
-import { Button, Menu, MenuItem, Divider, Box, useTheme } from "@mui/material";
+import { Box, Button, Divider, Menu, MenuItem, useTheme } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { nanoid } from "nanoid";
 
 import { HEADER_HEIGHT } from "../../helpers/theme.constans";
 
 export interface DropdownItem {
+  id: string;
   label: string;
   selected: boolean;
   onClick?: () => void;
 }
 
 interface DropdownProps {
+  name: string;
   items: DropdownItem[];
   isProfile: boolean;
 }
 
-const Dropdown = ({ items, isProfile }: DropdownProps) => {
+const Dropdown = ({ name, items, isProfile }: DropdownProps) => {
   const { palette } = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -33,8 +34,8 @@ const Dropdown = ({ items, isProfile }: DropdownProps) => {
   const selectedItem = items.find(({ selected }) => selected);
   const nonSelectedItems = items.filter(({ selected }) => !selected);
 
-  const menuTitleId = `menu-title-${nanoid()}`;
-  const menuCollapseId = `menu-collapse-${nanoid()}`;
+  const menuTitleId = `menu-title-${name}`;
+  const menuCollapseId = `menu-collapse-${name}`;
 
   return (
     <>
@@ -71,8 +72,8 @@ const Dropdown = ({ items, isProfile }: DropdownProps) => {
                 },
           }}
         >
-          {nonSelectedItems.map(({ label, onClick }, index) => (
-            <Box key={nanoid()}>
+          {nonSelectedItems.map(({ id, label, onClick }, index) => (
+            <Box key={id}>
               {index > 0 && <Divider />}
               <MenuItem
                 onClick={() => {

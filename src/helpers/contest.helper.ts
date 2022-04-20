@@ -17,11 +17,12 @@ export const mapContestDtoToMenuItem = ({
 };
 
 export const mapUserContestRoleToDropdownItem = (
-  { contest: { name } }: UserContestRole,
+  { contest: { id, name } }: UserContestRole,
   onClick: () => void,
   selected: boolean,
 ): DropdownItem => {
   return {
+    id: String(id),
     label: name,
     onClick,
     selected,

@@ -27,15 +27,18 @@ const Dashboard = ({ children }: DashboardProps) => {
       withCompetitionsList
       sideNavItems={[
         {
+          id: "manage",
           label: "Manage",
           path: "",
           subitems: [
             {
+              id: "competitions",
               label: "Competitions",
               path: "/dashboard/manage/competitions",
               subitems: [],
             },
             {
+              id: "affiliations",
               label: "Affiliations",
               path: "/dashboard/manage/affiliations",
               subitems: [],

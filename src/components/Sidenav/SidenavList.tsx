@@ -1,5 +1,4 @@
 import { List } from "@mui/material";
-import { nanoid } from "nanoid";
 
 import SidenavListItem from "./SidenavListItem";
 import { ListItem } from "./Sidenav";
@@ -13,7 +12,7 @@ const SideNavList = ({ items, level }: SidenavListProps) => {
   return (
     <List component="div" disablePadding>
       {items.map((item) => (
-        <SidenavListItem item={item} level={level} key={nanoid()} />
+        <SidenavListItem item={item} level={level} key={item.id} />
       ))}
     </List>
   );
