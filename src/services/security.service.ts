@@ -38,8 +38,10 @@ const login = async (loginRequest: LoginRequest): Promise<LoginResponse> => {
   return response;
 };
 
-export const useLogin = () => {
-  return useMutation<LoginResponse, Error, LoginRequest>(login);
+export const useLogin = (
+  options?: UseMutationOptions<LoginResponse, Error, LoginRequest>,
+) => {
+  return useMutation<LoginResponse, Error, LoginRequest>(login, options);
 };
 
 interface RegisterRequest {

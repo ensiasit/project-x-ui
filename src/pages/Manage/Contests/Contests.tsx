@@ -1,26 +1,26 @@
 import { Box, Button, Stack, TextField } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQueryClient } from "react-query";
-import { Dashboard } from "../../index";
-import { Role, useGetCurrentUser } from "../../../services/security.service";
-import { Alert, Loader, Table } from "../../../components";
+import { Role } from "../../../services/security.service";
+import { Alert, Error, Loader, Table } from "../../../components";
 import {
   useDeleteContest,
   useGetUserContests,
 } from "../../../services/contest.service";
 import { TableColumn } from "../../../components/Table/Table";
 import { filter } from "../../../helpers/table.helper";
+import { useCurrentUser } from "../../../helpers/security.helper";
 
-const Competitions = () => {
+const Contests = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const [search, setSearch] = useState("");
 
-  const currentUser = useGetCurrentUser();
+  const currentUser = useCurrentUser(true);
   const userContests = useGetUserContests({ enabled: currentUser.isSuccess });
   const deleteContest = useDeleteContest({
     onSuccess: () => {
@@ -28,18 +28,12 @@ const Competitions = () => {
     },
   });
 
-  useEffect(() => {
-    if (currentUser.isError) {
-      navigate("/signin");
-    }
-  }, [currentUser.status]);
-
   if (currentUser.isLoading || userContests.isLoading) {
     return <Loader />;
   }
 
   if (userContests.isError) {
-    return <Alert severity="error">Could not fetch contests</Alert>;
+    return <Error message="Could not fetch contests" />;
   }
 
   const cols: TableColumn[] = [
@@ -72,44 +66,39 @@ const Competitions = () => {
   };
 
   return currentUser.isSuccess && userContests.isSuccess ? (
-    <Dashboard>
-      <Stack spacing={2}>
-        {deleteContest.isSuccess && (
-          <Alert severity="success">Competition deleted with success.</Alert>
-        )}
-        {deleteContest.isError && (
-          <Alert severity="error">Could not delete competition.</Alert>
-        )}
-        {searchParams.get("success") && (
-          <Alert severity="success">Competition created with success.</Alert>
-        )}
-        {currentUser.data.admin && (
-          <Box sx={{ display: "flex" }}>
-            <TextField
-              sx={{ flexGrow: 1, pr: 2 }}
-              placeholder="Filter competitions"
-              size="small"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <Button
-              variant="contained"
-              onClick={() => navigate("/dashboard/manage/competitions/add")}
-            >
-              <Add fontSize="small" sx={{ mr: 1 }} />
-              Add contest
-            </Button>
-          </Box>
-        )}
-        <Table
-          cols={cols}
-          rows={filteredRows}
-          onRowDelete={onRowDelete}
-          onRowUpdate={onRowUpdate}
-        />
-      </Stack>
-    </Dashboard>
+    <Stack spacing={2}>
+      {deleteContest.isError && (
+        <Alert severity="error">Could not delete competition.</Alert>
+      )}
+      {searchParams.get("success") && (
+        <Alert severity="success">Competition created with success.</Alert>
+      )}
+      {currentUser.data.admin && (
+        <Box sx={{ display: "flex" }}>
+          <TextField
+            sx={{ flexGrow: 1, pr: 2 }}
+            placeholder="Filter competitions"
+            size="small"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            onClick={() => navigate("/dashboard/manage/competitions/add")}
+          >
+            <Add fontSize="small" sx={{ mr: 1 }} />
+            Add contest
+          </Button>
+        </Box>
+      )}
+      <Table
+        cols={cols}
+        rows={filteredRows}
+        onRowDelete={onRowDelete}
+        onRowUpdate={onRowUpdate}
+      />
+    </Stack>
   ) : null;
 };
 
-export default Competitions;
+export default Contests;

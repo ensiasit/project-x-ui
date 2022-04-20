@@ -5,17 +5,16 @@ import { grey } from "@mui/material/colors";
 import { HEADER_HEIGHT, SIDENAV_WIDTH } from "../../helpers/theme.constans";
 
 interface ContentProps {
-  withSideNav: boolean;
   children: React.ReactNode;
 }
 
-const Content = ({ withSideNav, children }: ContentProps) => {
+const Content = ({ children }: ContentProps) => {
   const { palette } = useTheme();
 
   return (
     <Box
       sx={{
-        marginLeft: withSideNav ? SIDENAV_WIDTH : 0,
+        marginLeft: SIDENAV_WIDTH,
         overflowY: "auto",
         p: 3,
         // ${2 * (8 * 3)}px is for top and bottom padding. NB: p: 3 <=> p: (3 * 8)px.

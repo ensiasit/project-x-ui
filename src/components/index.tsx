@@ -6,3 +6,5 @@ export { default as Loader } from "./Loader/Loader";
 export { default as Alert } from "./Alert/Alert";
 export { default as Layout } from "./Layout/Layout";
 export { default as Table } from "./Table/Table";
+export { default as Error } from "./Error/Error";
+export { default as FormContainer } from "./Form/FormContainer";

@@ -8,21 +8,17 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { useGetContests } from "../../services/contest.service";
-import { Alert, Loader } from "../../components";
+import { Alert, Error, Loader } from "../../components";
+import { Role, useRegister } from "../../services/security.service";
+import { useCurrentUser } from "../../helpers/security.helper";
 import { mapContestDtoToMenuItem } from "../../helpers/contest.helper";
-import {
-  Role,
-  useGetCurrentUser,
-  useRegister,
-} from "../../services/security.service";
 
 const Signup = () => {
   const navigate = useNavigate();
-
   const { palette, typography } = useTheme();
 
   const [username, setUsername] = useState("");
@@ -31,18 +27,21 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [contest, setContest] = useState("");
 
-  const getCurrentUser = useGetCurrentUser();
-  const getContests = useGetContests({ enabled: getCurrentUser.isError });
+  const currentUser = useCurrentUser(false);
+  const contests = useGetContests({ enabled: currentUser.isError });
   const register = useRegister({
     onSuccess: () => {
       navigate("/signin?success=1");
     },
   });
 
-  const contests = useMemo(
-    () => (getContests.data || []).map(mapContestDtoToMenuItem),
-    [getContests],
-  );
+  if (currentUser.isLoading || contests.isLoading) {
+    return <Loader />;
+  }
+
+  if (contests.isError) {
+    return <Error message="Could not fetch contests" />;
+  }
 
   const onSignup = () => {
     register.mutate({
@@ -54,25 +53,7 @@ const Signup = () => {
     });
   };
 
-  useEffect(() => {
-    if (getCurrentUser.isSuccess) {
-      navigate("/dashboard");
-    }
-  }, [getCurrentUser.status, register.status]);
-
-  if (getCurrentUser.isLoading) {
-    return <Loader />;
-  }
-
-  if (getContests.isError) {
-    return <Alert severity="error">Could not fetch contests</Alert>;
-  }
-
-  if (getContests.isLoading) {
-    return <Loader />;
-  }
-
-  return getCurrentUser.isError ? (
+  return currentUser.isError && contests.isSuccess ? (
     <Box
       sx={{
         height: "100%",
@@ -183,11 +164,13 @@ const Signup = () => {
                 value={contest}
                 onChange={(e) => setContest(e.target.value)}
               >
-                {contests.map(({ label, value }) => (
-                  <MenuItem key={value} value={value}>
-                    {label}
-                  </MenuItem>
-                ))}
+                {contests.data
+                  .map(mapContestDtoToMenuItem)
+                  .map(({ label, value }) => (
+                    <MenuItem key={value} value={value}>
+                      {label}
+                    </MenuItem>
+                  ))}
               </TextField>
             </Box>
             <Grid container>

@@ -24,15 +24,14 @@ const SidenavListItem = ({ item, level }: SidenavListItemProps) => {
   const { palette } = useTheme();
   const [isOpen, setIsOpen] = useState(true);
 
+  const backgroundGrey = palette.mode === "light" ? 200 : 800;
+  const current = item.subitems.length === 0 && pathname.includes(item.path);
+
   const itemStyle = {
     pl: 2 + 2 * level,
     borderLeft: "6px solid transparent",
-    backgroundColor:
-      item.path === pathname
-        ? palette.grey[palette.mode === "light" ? 200 : 800]
-        : "transparent",
-    borderLeftColor:
-      item.path === pathname ? palette.primary.main : "transparent",
+    backgroundColor: current ? palette.grey[backgroundGrey] : "transparent",
+    borderLeftColor: current ? palette.primary.main : "transparent",
   };
 
   return (
