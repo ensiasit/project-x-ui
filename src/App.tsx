@@ -12,16 +12,27 @@ import {
   Profile,
   Signin,
   Signup,
+  Users,
+  UsersAdd,
+  UsersEdit,
 } from "./pages";
 import { darkTheme, lightTheme } from "./helpers/theme.constans";
 import { GlobalContext, globalContext } from "./helpers/context.helper";
 import ContestsEdit from "./pages/Manage/Contests/ContestsEdit";
 import { Layout } from "./components";
+import {
+  getLocalStorageCurrentContest,
+  setLocalStorageCurrentContest,
+  UserContestRole,
+} from "./services/contest.service";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [theme, setTheme] = useState(lightTheme);
+  const [currentContest, setCurrentContest] = useState<UserContestRole | null>(
+    getLocalStorageCurrentContest(),
+  );
 
   const toggleTheme = () => {
     if (theme === lightTheme) {
@@ -34,8 +45,13 @@ const App = () => {
   const globalContextValue = useMemo<GlobalContext>(() => {
     return {
       toggleTheme,
+      currentContest,
+      setCurrentContest: (contest) => {
+        setLocalStorageCurrentContest(contest);
+        setCurrentContest(contest);
+      },
     };
-  }, [theme]);
+  }, [theme, currentContest]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -46,14 +62,12 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
 
             <Route path="/dashboard" element={<Layout />}>
-              <Route path=":contestId" element={null} />
-
               <Route path="profile" element={<Profile />} />
 
-              <Route path="manage/competitions" element={<Contests />} />
-              <Route path="manage/competitions/add" element={<ContestsAdd />} />
+              <Route path="manage/contests" element={<Contests />} />
+              <Route path="manage/contests/add" element={<ContestsAdd />} />
               <Route
-                path="manage/competitions/edit/:contestId"
+                path="manage/contests/edit/:contestId"
                 element={<ContestsEdit />}
               />
 
@@ -66,6 +80,10 @@ const App = () => {
                 path="manage/affiliations/edit/:affiliationId"
                 element={<AffiliationsEdit />}
               />
+
+              <Route path="manage/users" element={<Users />} />
+              <Route path="manage/users/add" element={<UsersAdd />} />
+              <Route path="manage/users/edit/:userId" element={<UsersEdit />} />
             </Route>
           </Routes>
         </ThemeProvider>

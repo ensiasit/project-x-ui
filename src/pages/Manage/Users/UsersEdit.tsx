@@ -1,35 +1,66 @@
 import { Box, TextField, Typography, useTheme } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { useEffect, useState } from "react";
-import { Alert, FormContainer, Loader } from "../../components";
-import { useUpdateUser } from "../../services/user.service";
-import { useCurrentUser } from "../../helpers/security.helper";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQueryClient } from "react-query";
+import { Alert, Error, FormContainer, Loader } from "../../../components";
+import { useCurrentUser } from "../../../helpers/security.helper";
+import { useGetUser, useUpdateUserById } from "../../../services/user.service";
+import { globalContext } from "../../../helpers/context.helper";
+import { UserContestRole } from "../../../services/contest.service";
 
-const Profile = () => {
+const UsersEdit = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { palette, typography } = useTheme();
-
-  const currentUser = useCurrentUser(true);
-  const updateUser = useUpdateUser();
+  const { userId } = useParams();
+  const { currentContest } = useContext(globalContext);
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  useEffect(() => {
-    if (currentUser.isSuccess) {
-      setUsername(currentUser.data.username);
-      setEmail(currentUser.data.email);
-    }
-  }, [currentUser.status]);
+  const currentUser = useCurrentUser(true);
+  const user = useGetUser(Number(userId), { enabled: currentUser.isSuccess });
+  const updateUser = useUpdateUserById({
+    onSuccess: () => {
+      queryClient.invalidateQueries(["getUser", Number(userId)]);
+      queryClient.invalidateQueries([
+        "getContestUsers",
+        Number((currentContest as UserContestRole).contest.id),
+      ]);
 
-  if (currentUser.isLoading) {
+      navigate("/dashboard/manage/users");
+    },
+  });
+
+  useEffect(() => {
+    if (user.isSuccess) {
+      setUsername(user.data.username);
+      setEmail(user.data.email);
+    }
+  }, [user.status]);
+
+  if (currentContest === null) {
+    return <Error message="You must choose a contest to see this page" />;
+  }
+
+  if (user.isError) {
+    return <Error message="Could not fetch user." />;
+  }
+
+  if (currentUser.isSuccess && !currentUser.data.admin) {
+    return <Error message="You don't have access." />;
+  }
+
+  if (user.isLoading) {
     return <Loader />;
   }
 
   const onUpdate = () => {
     updateUser.mutate({
-      id: 0,
+      id: Number(userId),
       username,
       email,
       password,
@@ -37,11 +68,8 @@ const Profile = () => {
     });
   };
 
-  return currentUser.isSuccess ? (
+  return user.isSuccess ? (
     <FormContainer>
-      {updateUser.isSuccess && (
-        <Alert severity="success">Information updated with success</Alert>
-      )}
       {updateUser.isError && (
         <Alert severity="error">{updateUser.error.message}</Alert>
       )}
@@ -131,4 +159,4 @@ const Profile = () => {
   ) : null;
 };
 
-export default Profile;
+export default UsersEdit;

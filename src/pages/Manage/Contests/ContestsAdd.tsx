@@ -11,7 +11,7 @@ import { LoadingButton } from "@mui/lab";
 import { useState } from "react";
 import { DateTime } from "luxon";
 import { useQueryClient } from "react-query";
-import { Alert, FormContainer, Loader } from "../../../components";
+import { Alert, Error, FormContainer, Loader } from "../../../components";
 import { useCreateContest } from "../../../services/contest.service";
 import { formatToUTC } from "../../../helpers/date.helper";
 import { useCurrentUser } from "../../../helpers/security.helper";
@@ -31,13 +31,17 @@ const ContestsAdd = () => {
   const currentUser = useCurrentUser(true);
   const createContest = useCreateContest({
     onSuccess: () => {
-      queryClient.invalidateQueries("getContests");
-      navigate("/dashboard/manage/competitions?success=1");
+      queryClient.invalidateQueries("getUserContests");
+      navigate("/dashboard/manage/contests");
     },
   });
 
   if (currentUser.isLoading) {
     return <Loader />;
+  }
+
+  if (currentUser.isSuccess && !currentUser.data.admin) {
+    return <Error message="You don't have access." />;
   }
 
   const onAdd = () => {

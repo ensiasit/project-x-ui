@@ -6,11 +6,11 @@ import Dropdown, { DropdownItem } from "../Dropdown/Dropdown";
 
 export interface HeaderProps {
   title: string;
-  competitions: DropdownItem[];
+  contests: DropdownItem[];
   profile: DropdownItem[];
 }
 
-const Header = ({ title, competitions, profile }: HeaderProps) => {
+const Header = ({ title, contests, profile }: HeaderProps) => {
   const navigate = useNavigate();
   const { palette, typography } = useTheme();
 
@@ -40,7 +40,7 @@ const Header = ({ title, competitions, profile }: HeaderProps) => {
           >
             {title}
           </Button>
-          {competitions.length > 0 && (
+          {contests.length > 0 && (
             <>
               <Divider
                 orientation="vertical"
@@ -48,11 +48,7 @@ const Header = ({ title, competitions, profile }: HeaderProps) => {
                 flexItem
                 sx={{ height: HEADER_HEIGHT, m: 0 }}
               />
-              <Dropdown
-                name="competitions"
-                items={competitions}
-                isProfile={false}
-              />
+              <Dropdown name="contests" items={contests} isProfile={false} />
             </>
           )}
         </Box>

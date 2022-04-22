@@ -7,6 +7,8 @@ export interface ListItem {
   label: string;
   path: string;
   subitems: ListItem[];
+  enabled: boolean;
+  isActive: (path: string) => boolean;
 }
 
 interface SidenavProps {

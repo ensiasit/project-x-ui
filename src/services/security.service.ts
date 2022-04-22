@@ -1,5 +1,8 @@
 import { useMutation, useQuery } from "react-query";
-import { UseMutationOptions } from "react-query/types/react/types";
+import {
+  UseMutationOptions,
+  UseQueryOptions,
+} from "react-query/types/react/types";
 import { API_BASE_URL } from "../helpers/config.helper";
 import { fetchJson } from "../helpers/fetch.helper";
 import { UserDto } from "./user.service";
@@ -21,6 +24,7 @@ export enum Role {
   ROLE_ADMIN = "ROLE_ADMIN",
   ROLE_MODERATOR = "ROLE_MODERATOR",
   ROLE_USER = "ROLE_USER",
+  ROLE_NOTHING = "ROLE_NOTHING",
 }
 
 const login = async (loginRequest: LoginRequest): Promise<LoginResponse> => {
@@ -44,22 +48,8 @@ export const useLogin = (
   return useMutation<LoginResponse, Error, LoginRequest>(login, options);
 };
 
-interface RegisterRequest {
-  username: string;
-  email: string;
-  password: string;
-  contestId: string;
-  role: Role;
-}
-
-interface RegisterResponse {
-  email: string;
-}
-
-const register = async (
-  registerRequest: RegisterRequest,
-): Promise<RegisterResponse> => {
-  return fetchJson<RegisterResponse>({
+const register = async (registerRequest: UserDto): Promise<UserDto> => {
+  return fetchJson<UserDto>({
     path: `${SECURITY_BASE_URL}/register`,
     method: "POST",
     headers: {
@@ -70,12 +60,9 @@ const register = async (
 };
 
 export const useRegister = (
-  options?: UseMutationOptions<RegisterResponse, Error, RegisterRequest>,
+  options?: UseMutationOptions<UserDto, Error, UserDto>,
 ) => {
-  return useMutation<RegisterResponse, Error, RegisterRequest>(
-    register,
-    options,
-  );
+  return useMutation<UserDto, Error, UserDto>(register, options);
 };
 
 export const getToken = () => {
@@ -93,8 +80,11 @@ const getCurrentUser = async (): Promise<UserDto> => {
   });
 };
 
-export const useGetCurrentUser = () => {
+export const useGetCurrentUser = (
+  options?: UseQueryOptions<UserDto, Error>,
+) => {
   return useQuery<UserDto, Error>("getCurrentUser", getCurrentUser, {
+    ...options,
     retry: 1,
     retryDelay: 0,
   });

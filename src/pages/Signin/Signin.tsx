@@ -8,14 +8,13 @@ import {
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { Alert, Loader } from "../../components";
 import { useLogin } from "../../services/security.service";
 import { useCurrentUser } from "../../helpers/security.helper";
 
 const Signin = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { palette, typography } = useTheme();
 
@@ -54,14 +53,6 @@ const Signin = () => {
         <Grid item xs={2} md={3} lg={4} />
         <Grid item xs={8} md={6} lg={4}>
           <Stack spacing={2}>
-            {searchParams.get("success") && (
-              <Alert severity="success">You are registered with success</Alert>
-            )}
-            {searchParams.get("error") && (
-              <Alert severity="error">
-                Session expired. Login to have access.
-              </Alert>
-            )}
             {login.isError && (
               <Alert severity="error">Incorrect email or password</Alert>
             )}

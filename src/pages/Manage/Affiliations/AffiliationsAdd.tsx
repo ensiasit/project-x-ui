@@ -11,7 +11,7 @@ import { LoadingButton } from "@mui/lab";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
 import ReactCountryFlag from "react-country-flag";
-import { Alert, FormContainer, Loader } from "../../../components";
+import { Alert, Error, FormContainer, Loader } from "../../../components";
 import { useCreateAffiliation } from "../../../services/affiliation.service";
 import { Country } from "../../../helpers/country.helper";
 import { useCurrentUser } from "../../../helpers/security.helper";
@@ -29,12 +29,16 @@ const AffiliationsAdd = () => {
   const createAffiliation = useCreateAffiliation({
     onSuccess: () => {
       queryClient.invalidateQueries("getAffiliations");
-      navigate("/dashboard/manage/affiliations?success=1");
+      navigate("/dashboard/manage/affiliations");
     },
   });
 
   if (currentUser.isLoading) {
     return <Loader />;
+  }
+
+  if (currentUser.isSuccess && !currentUser.data.admin) {
+    return <Error message="You don't have access." />;
   }
 
   const onAdd = () => {

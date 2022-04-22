@@ -20,7 +20,8 @@ type TableColumnType =
   | "boolean"
   | "date"
   | "country"
-  | "image";
+  | "image"
+  | "custom";
 
 export interface TableColumn {
   id: string;
@@ -69,6 +70,10 @@ const Table = ({ cols, rows, onRowDelete, onRowUpdate }: TableProps) => {
           style={{ maxWidth: "70px", maxHeight: "50px" }}
         />
       ) : null;
+    }
+
+    if (type === "custom") {
+      return (value as any).render();
     }
 
     return value ? "True" : "False";

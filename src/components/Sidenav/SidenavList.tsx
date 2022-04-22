@@ -11,9 +11,11 @@ interface SidenavListProps {
 const SideNavList = ({ items, level }: SidenavListProps) => {
   return (
     <List component="div" disablePadding>
-      {items.map((item) => (
-        <SidenavListItem item={item} level={level} key={item.id} />
-      ))}
+      {items
+        .filter(({ enabled }) => enabled)
+        .map((item) => (
+          <SidenavListItem item={item} level={level} key={item.id} />
+        ))}
     </List>
   );
 };

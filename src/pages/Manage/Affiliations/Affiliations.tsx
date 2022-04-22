@@ -1,5 +1,5 @@
 import { useQueryClient } from "react-query";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
 import { Add } from "@mui/icons-material";
@@ -15,7 +15,6 @@ import { useCurrentUser } from "../../../helpers/security.helper";
 const Affiliations = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   const [search, setSearch] = useState("");
 
@@ -35,6 +34,10 @@ const Affiliations = () => {
 
   if (affiliations.isError) {
     return <Error message="Could not fetch contests" />;
+  }
+
+  if (currentUser.isSuccess && !currentUser.data.admin) {
+    return <Error message="You don't have access." />;
   }
 
   const cols: TableColumn[] = [
@@ -66,16 +69,13 @@ const Affiliations = () => {
   return currentUser.isSuccess && affiliations.isSuccess ? (
     <Stack spacing={2}>
       {deleteAffiliation.isError && (
-        <Alert severity="error">Could not delete competition.</Alert>
-      )}
-      {searchParams.get("success") && (
-        <Alert severity="success">Affiliation created with success.</Alert>
+        <Alert severity="error">Could not delete contests.</Alert>
       )}
       {currentUser.data.admin && (
         <Box sx={{ display: "flex" }}>
           <TextField
             sx={{ flexGrow: 1, pr: 2 }}
-            placeholder="Filter competitions"
+            placeholder="Filter affiliations"
             size="small"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
