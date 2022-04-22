@@ -1,6 +1,6 @@
 import { Box, Button, Stack, TextField } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
 import { Role } from "../../../services/security.service";
@@ -16,7 +16,6 @@ import { useCurrentUser } from "../../../helpers/security.helper";
 const Contests = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   const [search, setSearch] = useState("");
 
@@ -46,13 +45,15 @@ const Contests = () => {
   ];
 
   const rows = userContests.isSuccess
-    ? userContests.data.map(({ role, contest }) => {
-        return {
-          ...contest,
-          canEdit: role === Role.ROLE_ADMIN || role === Role.ROLE_MODERATOR,
-          canDelete: role === Role.ROLE_ADMIN || role === Role.ROLE_MODERATOR,
-        };
-      })
+    ? userContests.data
+        .filter(({ role }) => role !== Role.ROLE_NOTHING)
+        .map(({ role, contest }) => {
+          return {
+            ...contest,
+            canEdit: role === Role.ROLE_ADMIN || role === Role.ROLE_MODERATOR,
+            canDelete: role === Role.ROLE_ADMIN || role === Role.ROLE_MODERATOR,
+          };
+        })
     : [];
 
   const filteredRows = filter(rows, search);
@@ -62,35 +63,31 @@ const Contests = () => {
   };
 
   const onRowUpdate = (id: number) => {
-    navigate(`/dashboard/manage/competitions/edit/${id}`);
+    navigate(`/dashboard/manage/contests/edit/${id}`);
   };
 
   return currentUser.isSuccess && userContests.isSuccess ? (
     <Stack spacing={2}>
       {deleteContest.isError && (
-        <Alert severity="error">Could not delete competition.</Alert>
+        <Alert severity="error">Could not delete contests.</Alert>
       )}
-      {searchParams.get("success") && (
-        <Alert severity="success">Competition created with success.</Alert>
-      )}
-      {currentUser.data.admin && (
-        <Box sx={{ display: "flex" }}>
-          <TextField
-            sx={{ flexGrow: 1, pr: 2 }}
-            placeholder="Filter competitions"
-            size="small"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Button
-            variant="contained"
-            onClick={() => navigate("/dashboard/manage/competitions/add")}
-          >
-            <Add fontSize="small" sx={{ mr: 1 }} />
-            Add contest
-          </Button>
-        </Box>
-      )}
+      <Box sx={{ display: "flex" }}>
+        <TextField
+          sx={{ flexGrow: 1, pr: 2 }}
+          placeholder="Filter contests"
+          size="small"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Button
+          disabled={!currentUser.data.admin}
+          variant="contained"
+          onClick={() => navigate("/dashboard/manage/contests/add")}
+        >
+          <Add fontSize="small" sx={{ mr: 1 }} />
+          Add contest
+        </Button>
+      </Box>
       <Table
         cols={cols}
         rows={filteredRows}

@@ -37,7 +37,7 @@ const AffiliationsEdit = () => {
     onSuccess: () => {
       queryClient.invalidateQueries("getAffiliations");
       queryClient.invalidateQueries(["getAffiliation", Number(affiliationId)]);
-      navigate("/dashboard/manage/affiliations?success=1");
+      navigate("/dashboard/manage/affiliations");
     },
   });
 
@@ -54,6 +54,10 @@ const AffiliationsEdit = () => {
 
   if (affiliation.isError) {
     return <Error message="Could not fetch affiliation" />;
+  }
+
+  if (currentUser.isSuccess && !currentUser.data.admin) {
+    return <Error message="You don't have access." />;
   }
 
   const onUpdate = () => {

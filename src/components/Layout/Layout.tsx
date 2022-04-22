@@ -1,8 +1,9 @@
 import { useTheme } from "@mui/material";
-import { useNavigate, useParams, Outlet } from "react-router-dom";
-import { useContext } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { useQueryClient } from "react-query";
 import { Content, Error, Header, Loader, Sidenav } from "../index";
-import { logout } from "../../services/security.service";
+import { logout, Role } from "../../services/security.service";
 import { useGetUserContests } from "../../services/contest.service";
 import { mapUserContestRoleToDropdownItem } from "../../helpers/contest.helper";
 import { ListItem } from "../Sidenav/Sidenav";
@@ -14,18 +15,32 @@ const Layout = () => {
   const navigate = useNavigate();
   const { toggleTheme } = useContext<GlobalContext>(globalContext);
   const { palette } = useTheme();
-  const { contestId } = useParams();
+  const { currentContest, setCurrentContest } = useContext(globalContext);
+  const queryClient = useQueryClient();
 
   const currentUser = useCurrentUser(true);
-  const getUserContests = useGetUserContests({
+  const userContests = useGetUserContests({
     enabled: currentUser.isSuccess,
   });
 
-  if (currentUser.isLoading || getUserContests.isLoading) {
+  useEffect(() => {
+    if (userContests.isSuccess && currentContest !== null) {
+      const currentUserContestRole = userContests.data.find(
+        (userContestRole) =>
+          userContestRole.contest.id === currentContest.contest.id,
+      );
+
+      if (currentUserContestRole) {
+        setCurrentContest(currentUserContestRole);
+      }
+    }
+  }, [userContests.status]);
+
+  if (currentUser.isLoading || userContests.isLoading) {
     return <Loader />;
   }
 
-  if (getUserContests.isError) {
+  if (userContests.isError) {
     return <Error message="Could not fetch user contests." />;
   }
 
@@ -34,15 +49,37 @@ const Layout = () => {
     navigate("/signin");
   };
 
-  const competitions: DropdownItem[] = getUserContests.isSuccess
-    ? getUserContests.data.map((userContestRole) =>
-        mapUserContestRoleToDropdownItem(
-          userContestRole,
-          () => navigate(`/dashboard/${userContestRole.contest.id}`),
-          userContestRole.contest.id === Number(contestId),
-        ),
-      )
+  const contests: DropdownItem[] = userContests.isSuccess
+    ? userContests.data
+        .filter(({ role }) => role !== Role.ROLE_NOTHING)
+        .map((userContestRole) =>
+          mapUserContestRoleToDropdownItem(
+            userContestRole,
+            () => {
+              setCurrentContest(userContestRole);
+              queryClient.invalidateQueries([
+                "getContestUsers",
+                userContestRole.contest.id,
+              ]);
+            },
+            currentContest !== null &&
+              userContestRole.contest.id === currentContest.contest.id,
+          ),
+        )
     : [];
+
+  const manageEnabled =
+    currentUser.isSuccess &&
+    (currentUser.data.admin ||
+      (userContests.isSuccess &&
+        !!userContests.data.find(
+          ({ role }) =>
+            role === Role.ROLE_MODERATOR || role === Role.ROLE_ADMIN,
+        )));
+
+  const usersEnabled =
+    currentContest?.role === Role.ROLE_MODERATOR ||
+    currentContest?.role === Role.ROLE_ADMIN;
 
   const sidenavItems: ListItem[] = [
     {
@@ -51,26 +88,48 @@ const Layout = () => {
       path: "",
       subitems: [
         {
-          id: "competitions",
-          label: "Competitions",
-          path: "/dashboard/manage/competitions",
+          id: "contests",
+          label: "Contests",
+          path: "/dashboard/manage/contests",
           subitems: [],
+          enabled: true,
+          isActive: (path) => path.startsWith("/dashboard/manage/contests"),
         },
         {
           id: "affiliations",
           label: "Affiliations",
           path: "/dashboard/manage/affiliations",
           subitems: [],
+          enabled: currentUser.isSuccess && currentUser.data.admin,
+          isActive: (path) => path.startsWith("/dashboard/manage/affiliations"),
+        },
+        {
+          id: "users",
+          label: "Users",
+          path: "/dashboard/manage/users",
+          subitems: [],
+          enabled: usersEnabled,
+          isActive: (path) => path.startsWith("/dashboard/manage/users"),
         },
       ],
+      enabled: manageEnabled,
+      isActive: () => false,
+    },
+    {
+      id: "compete",
+      label: "Compete",
+      path: "",
+      subitems: [],
+      enabled: true,
+      isActive: () => false,
     },
   ];
 
-  return currentUser.isSuccess && getUserContests.isSuccess ? (
+  return currentUser.isSuccess && userContests.isSuccess ? (
     <>
       <Header
         title="Project X"
-        competitions={competitions}
+        contests={contests}
         profile={[
           { id: "1", label: currentUser.data.username, selected: true },
           {

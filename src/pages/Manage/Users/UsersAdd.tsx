@@ -1,34 +1,47 @@
 import { Box, TextField, Typography, useTheme } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { useEffect, useState } from "react";
-import { Alert, FormContainer, Loader } from "../../components";
-import { useUpdateUser } from "../../services/user.service";
-import { useCurrentUser } from "../../helpers/security.helper";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "react-query";
+import { Alert, Error, FormContainer } from "../../../components";
+import { useCurrentUser } from "../../../helpers/security.helper";
+import { useCreateUser } from "../../../services/user.service";
+import { globalContext } from "../../../helpers/context.helper";
+import { UserContestRole } from "../../../services/contest.service";
 
-const Profile = () => {
+const UsersAdd = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { palette, typography } = useTheme();
-
-  const currentUser = useCurrentUser(true);
-  const updateUser = useUpdateUser();
+  const { currentContest } = useContext(globalContext);
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  useEffect(() => {
-    if (currentUser.isSuccess) {
-      setUsername(currentUser.data.username);
-      setEmail(currentUser.data.email);
-    }
-  }, [currentUser.status]);
+  const currentUser = useCurrentUser(true);
+  const addUser = useCreateUser({
+    onSuccess: () => {
+      queryClient.invalidateQueries([
+        "getContestUsers",
+        Number((currentContest as UserContestRole).contest.id),
+      ]);
 
-  if (currentUser.isLoading) {
-    return <Loader />;
+      navigate("/dashboard/manage/users");
+    },
+  });
+
+  if (currentContest === null) {
+    return <Error message="You must choose a contest to see this page" />;
+  }
+
+  if (currentUser.isSuccess && !currentUser.data.admin) {
+    return <Error message="You don't have access." />;
   }
 
   const onUpdate = () => {
-    updateUser.mutate({
+    addUser.mutate({
       id: 0,
       username,
       email,
@@ -37,13 +50,10 @@ const Profile = () => {
     });
   };
 
-  return currentUser.isSuccess ? (
+  return (
     <FormContainer>
-      {updateUser.isSuccess && (
-        <Alert severity="success">Information updated with success</Alert>
-      )}
-      {updateUser.isError && (
-        <Alert severity="error">{updateUser.error.message}</Alert>
+      {addUser.isError && (
+        <Alert severity="error">{addUser.error.message}</Alert>
       )}
       <Box>
         <Typography
@@ -120,15 +130,15 @@ const Profile = () => {
         />
       </Box>
       <LoadingButton
-        loading={updateUser.isLoading}
+        loading={addUser.isLoading}
         variant="contained"
         fullWidth
         onClick={onUpdate}
       >
-        Update
+        Add
       </LoadingButton>
     </FormContainer>
-  ) : null;
+  );
 };
 
-export default Profile;
+export default UsersAdd;

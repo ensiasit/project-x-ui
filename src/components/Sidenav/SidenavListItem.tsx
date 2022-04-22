@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
+  Collapse,
   ListItemButton,
   ListItemText,
-  Collapse,
   useTheme,
 } from "@mui/material";
 import ExpandLess from "@mui/icons-material/ExpandLess";
@@ -25,13 +25,16 @@ const SidenavListItem = ({ item, level }: SidenavListItemProps) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const backgroundGrey = palette.mode === "light" ? 200 : 800;
-  const current = item.subitems.length === 0 && pathname.includes(item.path);
 
   const itemStyle = {
     pl: 2 + 2 * level,
     borderLeft: "6px solid transparent",
-    backgroundColor: current ? palette.grey[backgroundGrey] : "transparent",
-    borderLeftColor: current ? palette.primary.main : "transparent",
+    backgroundColor: item.isActive(pathname)
+      ? palette.grey[backgroundGrey]
+      : "transparent",
+    borderLeftColor: item.isActive(pathname)
+      ? palette.primary.main
+      : "transparent",
   };
 
   return (

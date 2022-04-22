@@ -38,9 +38,9 @@ const ContestsEdit = () => {
   });
   const updateContest = useUpdateContest({
     onSuccess: () => {
-      queryClient.invalidateQueries("getContests");
+      queryClient.invalidateQueries("getUserContests");
       queryClient.invalidateQueries(["getContest", Number(contestId)]);
-      navigate("/dashboard/manage/competitions?success=1");
+      navigate("/dashboard/manage/contests");
     },
   });
 

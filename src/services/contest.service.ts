@@ -7,8 +7,11 @@ import { DateTime } from "luxon";
 import { API_BASE_URL } from "../helpers/config.helper";
 import { Role } from "./security.service";
 import { fetchJson } from "../helpers/fetch.helper";
+import { UserDto } from "./user.service";
 
 const CONTESTS_BASE_URL = `${API_BASE_URL}/contests`;
+
+const CURRENT_CONTEST_LOCAL_STORAGE_KEY = "CURRENT_CONTEST_LOCAL_STORAGE_KEY";
 
 export interface ContestDto {
   id: number;
@@ -32,6 +35,7 @@ export const useGetContests = (
 
 export interface UserContestRole {
   role: Role;
+  user: UserDto;
   contest: ContestDto;
 }
 
@@ -120,5 +124,71 @@ export const useUpdateContest = (
   return useMutation<ContestDto, Error, ContestDto>(
     (contestDto: ContestDto) => updateContest(contestDto),
     options,
+  );
+};
+
+const getContestUsers = async (id: number): Promise<UserContestRole[]> => {
+  return fetchJson<UserContestRole[]>({
+    path: `${CONTESTS_BASE_URL}/${id}/users`,
+    secure: true,
+  });
+};
+
+export const useContestUsers = (
+  id: number,
+  options?: UseQueryOptions<UserContestRole[], Error>,
+) => {
+  return useQuery<UserContestRole[], Error>(
+    ["getContestUsers", id],
+    () => getContestUsers(id),
+    options,
+  );
+};
+
+interface UpdateUserContestRoleProps {
+  contestId: number;
+  userId: number;
+  role: Role;
+}
+
+const updateUserContestRole = async ({
+  contestId,
+  userId,
+  role,
+}: UpdateUserContestRoleProps): Promise<UserContestRole> => {
+  return fetchJson<UserContestRole>({
+    path: `${CONTESTS_BASE_URL}/${contestId}/users/${userId}/${role}`,
+    method: "PUT",
+    secure: true,
+  });
+};
+
+export const useUpdateUserContestRole = (
+  options?: UseMutationOptions<
+    UserContestRole,
+    Error,
+    UpdateUserContestRoleProps
+  >,
+) => {
+  return useMutation<UserContestRole, Error, UpdateUserContestRoleProps>(
+    updateUserContestRole,
+    options,
+  );
+};
+
+export const getLocalStorageCurrentContest = (): UserContestRole | null => {
+  if (localStorage.getItem(CURRENT_CONTEST_LOCAL_STORAGE_KEY) === null) {
+    return null;
+  }
+
+  return JSON.parse(
+    localStorage.getItem(CURRENT_CONTEST_LOCAL_STORAGE_KEY) as string,
+  );
+};
+
+export const setLocalStorageCurrentContest = (contestRole: UserContestRole) => {
+  localStorage.setItem(
+    CURRENT_CONTEST_LOCAL_STORAGE_KEY,
+    JSON.stringify(contestRole),
   );
 };

@@ -7,3 +7,6 @@ export { default as ContestsEdit } from "./Manage/Contests/ContestsEdit";
 export { default as Affiliations } from "./Manage/Affiliations/Affiliations";
 export { default as AffiliationsAdd } from "./Manage/Affiliations/AffiliationsAdd";
 export { default as AffiliationsEdit } from "./Manage/Affiliations/AffiliationsEdit";
+export { default as Users } from "./Manage/Users/Users";
+export { default as UsersAdd } from "./Manage/Users/UsersAdd";
+export { default as UsersEdit } from "./Manage/Users/UsersEdit";

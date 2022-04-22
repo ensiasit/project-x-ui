@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Grid,
-  MenuItem,
   Stack,
   TextField,
   Typography,
@@ -11,11 +10,9 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { useGetContests } from "../../services/contest.service";
-import { Alert, Error, Loader } from "../../components";
-import { Role, useRegister } from "../../services/security.service";
+import { Alert, Loader } from "../../components";
+import { useRegister } from "../../services/security.service";
 import { useCurrentUser } from "../../helpers/security.helper";
-import { mapContestDtoToMenuItem } from "../../helpers/contest.helper";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -25,35 +22,29 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [contest, setContest] = useState("");
 
   const currentUser = useCurrentUser(false);
-  const contests = useGetContests({ enabled: currentUser.isError });
   const register = useRegister({
     onSuccess: () => {
-      navigate("/signin?success=1");
+      navigate("/signin");
     },
   });
 
-  if (currentUser.isLoading || contests.isLoading) {
+  if (currentUser.isLoading) {
     return <Loader />;
-  }
-
-  if (contests.isError) {
-    return <Error message="Could not fetch contests" />;
   }
 
   const onSignup = () => {
     register.mutate({
+      id: 0,
       username,
       email,
       password,
-      contestId: contest,
-      role: Role.ROLE_USER,
+      admin: false,
     });
   };
 
-  return currentUser.isError && contests.isSuccess ? (
+  return currentUser.isError ? (
     <Box
       sx={{
         height: "100%",
@@ -146,32 +137,6 @@ const Signup = () => {
                 error={password !== confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
-            </Box>
-            <Box>
-              <Typography
-                sx={{
-                  color: palette.text.secondary,
-                  fontSize: typography.body2,
-                  mb: 1,
-                }}
-              >
-                Contest
-              </Typography>
-              <TextField
-                fullWidth
-                select
-                size="small"
-                value={contest}
-                onChange={(e) => setContest(e.target.value)}
-              >
-                {contests.data
-                  .map(mapContestDtoToMenuItem)
-                  .map(({ label, value }) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-              </TextField>
             </Box>
             <Grid container>
               <Grid item xs={6} sx={{ pr: 1 }}>
