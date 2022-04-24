@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Box, Button, Divider, Menu, MenuItem, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  Menu,
+  MenuItem,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
@@ -45,14 +53,19 @@ const Dropdown = ({ name, items, isProfile }: DropdownProps) => {
     <>
       <Button
         color="inherit"
-        sx={{ ml: 2, minHeight: HEADER_HEIGHT }}
+        sx={{
+          ml: 2,
+          minHeight: HEADER_HEIGHT,
+          minWidth: "120px",
+          justifyContent: "start",
+        }}
         id={menuTitleId}
         aria-controls={open ? menuCollapseId : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
       >
-        {selectedItem?.label}
+        <Typography sx={{ flexGrow: 1 }}>{selectedItem?.label}</Typography>
         {nonSelectedItems.length > 0 &&
           (open ? <ExpandLessIcon /> : <ExpandMoreIcon />)}
       </Button>

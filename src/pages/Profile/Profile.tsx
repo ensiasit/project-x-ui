@@ -1,15 +1,34 @@
-import { Box, TextField, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useEffect, useState } from "react";
-import { Alert, FormContainer, Loader } from "../../components";
+import { useNavigate } from "react-router-dom";
+import { FormContainer, Loader } from "../../components";
 import { useUpdateUser } from "../../services/user.service";
 import { useCurrentUser } from "../../helpers/security.helper";
+import { useNotification } from "../../helpers/notifications.helper";
 
 const Profile = () => {
+  const navigate = useNavigate();
   const { palette, typography } = useTheme();
+  const { pushNotification } = useNotification();
 
   const currentUser = useCurrentUser(true);
-  const updateUser = useUpdateUser();
+  const updateUser = useUpdateUser({
+    onSuccess: () => {
+      navigate(-1);
+      pushNotification("Profile updated with success", "success");
+    },
+    onError: () => {
+      pushNotification("Could not update profile", "error");
+    },
+  });
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -39,12 +58,6 @@ const Profile = () => {
 
   return currentUser.isSuccess ? (
     <FormContainer>
-      {updateUser.isSuccess && (
-        <Alert severity="success">Information updated with success</Alert>
-      )}
-      {updateUser.isError && (
-        <Alert severity="error">{updateUser.error.message}</Alert>
-      )}
       <Box>
         <Typography
           sx={{
@@ -119,14 +132,28 @@ const Profile = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </Box>
-      <LoadingButton
-        loading={updateUser.isLoading}
-        variant="contained"
-        fullWidth
-        onClick={onUpdate}
-      >
-        Update
-      </LoadingButton>
+      <Grid container>
+        <Grid xs={6} item sx={{ pr: 1 }}>
+          <LoadingButton
+            loading={updateUser.isLoading}
+            variant="contained"
+            fullWidth
+            onClick={onUpdate}
+          >
+            Update
+          </LoadingButton>
+        </Grid>
+        <Grid xs={6} item sx={{ pl: 1 }}>
+          <Button
+            color="secondary"
+            variant="contained"
+            fullWidth
+            onClick={() => navigate(-1)}
+          >
+            Cancel
+          </Button>
+        </Grid>
+      </Grid>
     </FormContainer>
   ) : null;
 };

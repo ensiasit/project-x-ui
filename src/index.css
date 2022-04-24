@@ -1,0 +1,56 @@
+.SnackbarContainer-root {
+  margin-top: 64px !important;
+}
+
+.SnackbarContent-root {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.snackbar-success-light {
+  background-color: rgb(237, 247, 237) !important;
+  color: rgb(30, 70, 32) !important;
+  border-left: 5px solid rgb(76, 175, 80) !important;
+}
+
+.snackbar-success-dark {
+  background-color: rgb(12, 19, 13) !important;
+  color: rgb(244, 199, 199) !important;
+  border-left: 5px solid rgb(102, 187, 106) !important;
+}
+
+.snackbar-info-light {
+  background-color: rgb(229, 246, 253) !important;
+  color: rgb(1, 67, 97) !important;
+  border-left: 5px solid rgb(3, 169, 244) !important;
+}
+
+.snackbar-info-dark {
+  background-color: rgb(7, 19, 24) !important;
+  color: rgb(255, 226, 183) !important;
+  border-left: 5px solid rgb(41, 182, 246) !important;
+}
+
+.snackbar-warning-light {
+  background-color: rgb(255, 244, 229) !important;
+  color: rgb(102, 60, 0) !important;
+  border-left: 5px solid rgb(255, 152, 0) !important;
+}
+
+.snackbar-warning-dark {
+  background-color: rgb(25, 18, 7) !important;
+  color: rgb(184, 231, 251) !important;
+  border-left: 5px solid rgb(255, 167, 38) !important;
+}
+
+.snackbar-error-light {
+  background-color: rgb(253, 237, 237) !important;
+  color: rgb(95, 33, 32) !important;
+  border-left: 5px solid rgb(239, 83, 80) !important;
+}
+
+.snackbar-error-dark {
+  background-color: rgb(22, 11, 11) !important;
+  color: rgb(244, 199, 199) !important;
+  border-left: 5px solid rgb(244, 67, 54) !important;
+}

@@ -1,8 +1,10 @@
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
+  Grid,
   TextField,
   Typography,
   useTheme,
@@ -15,15 +17,17 @@ import {
   useGetContest,
   useUpdateContest,
 } from "../../../services/contest.service";
-import { Alert, Error, FormContainer, Loader } from "../../../components";
+import { Error, FormContainer, Loader } from "../../../components";
 import { formatToUTC } from "../../../helpers/date.helper";
 import { useCurrentUser } from "../../../helpers/security.helper";
+import { useNotification } from "../../../helpers/notifications.helper";
 
 const ContestsEdit = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { palette, typography } = useTheme();
   const { contestId } = useParams();
+  const { pushNotification } = useNotification();
 
   const [name, setName] = useState("");
   const [startTime, setStartTime] = useState(DateTime.utc());
@@ -41,6 +45,10 @@ const ContestsEdit = () => {
       queryClient.invalidateQueries("getUserContests");
       queryClient.invalidateQueries(["getContest", Number(contestId)]);
       navigate("/dashboard/manage/contests");
+      pushNotification("Contest updated with success", "success");
+    },
+    onError: () => {
+      pushNotification("Could not update contest", "error");
     },
   });
 
@@ -77,9 +85,6 @@ const ContestsEdit = () => {
 
   return currentUser.isSuccess && contest.isSuccess ? (
     <FormContainer>
-      {updateContest.isError && (
-        <Alert severity="error">{updateContest.error.message}</Alert>
-      )}
       <Box>
         <Typography
           sx={{
@@ -191,14 +196,28 @@ const ContestsEdit = () => {
           label="Public scoreboard"
         />
       </Box>
-      <LoadingButton
-        loading={updateContest.isLoading}
-        variant="contained"
-        fullWidth
-        onClick={onAdd}
-      >
-        Update
-      </LoadingButton>
+      <Grid container>
+        <Grid xs={6} item sx={{ pr: 1 }}>
+          <LoadingButton
+            loading={updateContest.isLoading}
+            variant="contained"
+            fullWidth
+            onClick={onAdd}
+          >
+            Update
+          </LoadingButton>
+        </Grid>
+        <Grid xs={6} item sx={{ pl: 1 }}>
+          <Button
+            color="secondary"
+            variant="contained"
+            fullWidth
+            onClick={() => navigate(-1)}
+          >
+            Cancel
+          </Button>
+        </Grid>
+      </Grid>
     </FormContainer>
   ) : null;
 };

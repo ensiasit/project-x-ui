@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Loader } from "../../components";
+import { Loader } from "../../components";
 import { useRegister } from "../../services/security.service";
 import { useCurrentUser } from "../../helpers/security.helper";
 
@@ -61,9 +61,6 @@ const Signup = () => {
         <Grid item xs={2} md={3} lg={4} />
         <Grid item xs={8} md={6} lg={4}>
           <Stack spacing={2}>
-            {register.isError && (
-              <Alert severity="error">{register.error.message}</Alert>
-            )}
             <Box>
               <Typography
                 sx={{

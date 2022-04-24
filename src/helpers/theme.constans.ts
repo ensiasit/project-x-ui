@@ -30,8 +30,8 @@ export const lightTheme = createTheme({
   palette: {
     mode: "light",
     background: {
-      default: "white",
-      paper: "white",
+      default: "#FFF",
+      paper: "#FFF",
     },
     primary: {
       main: "#0f62fe",
@@ -47,8 +47,8 @@ export const darkTheme = createTheme({
   palette: {
     mode: "dark",
     background: {
-      default: "black",
-      paper: "black",
+      default: "#000",
+      paper: "#000",
     },
     divider: grey[800],
     primary: {

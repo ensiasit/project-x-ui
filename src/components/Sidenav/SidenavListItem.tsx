@@ -4,6 +4,7 @@ import {
   Box,
   Collapse,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
   useTheme,
 } from "@mui/material";
@@ -55,6 +56,7 @@ const SidenavListItem = ({ item, level }: SidenavListItemProps) => {
         }}
         onClick={() => setIsOpen(!isOpen)}
       >
+        {item.icon && <ListItemIcon>{item.icon}</ListItemIcon>}
         <ListItemText primary={item.label} />
         {item.subitems.length > 0 && (isOpen ? <ExpandLess /> : <ExpandMore />)}
       </ListItemButton>
