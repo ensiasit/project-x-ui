@@ -1,10 +1,12 @@
 import { Box, Drawer, useTheme } from "@mui/material";
+import { ReactNode } from "react";
 import { HEADER_HEIGHT, SIDENAV_WIDTH } from "../../helpers/theme.constans";
 import SideNavList from "./SidenavList";
 
 export interface ListItem {
   id: string;
   label: string;
+  icon?: ReactNode;
   path: string;
   subitems: ListItem[];
   enabled: boolean;

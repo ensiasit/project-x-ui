@@ -7,6 +7,7 @@ import {
   useUpdateUserContestRole,
 } from "../../../services/contest.service";
 import { globalContext } from "../../../helpers/context.helper";
+import { useNotification } from "../../../helpers/notifications.helper";
 
 interface UserRoleSelectProps {
   userId: number;
@@ -21,12 +22,17 @@ const UserRoleSelect = ({
 }: UserRoleSelectProps) => {
   const { currentContest, setCurrentContest } = useContext(globalContext);
   const queryClient = useQueryClient();
+  const { pushNotification } = useNotification();
 
   const [role, setRole] = useState(initialRole);
 
   const updateUserContestRole = useUpdateUserContestRole({
     onSuccess: () => {
       queryClient.invalidateQueries("getUserContests");
+      pushNotification("Role updated with success", "success");
+    },
+    onError: () => {
+      pushNotification("Could not update role", "error");
     },
   });
 

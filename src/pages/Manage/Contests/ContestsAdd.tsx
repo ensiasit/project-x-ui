@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import {
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
+  Grid,
   TextField,
   Typography,
   useTheme,
@@ -11,15 +13,17 @@ import { LoadingButton } from "@mui/lab";
 import { useState } from "react";
 import { DateTime } from "luxon";
 import { useQueryClient } from "react-query";
-import { Alert, Error, FormContainer, Loader } from "../../../components";
+import { Error, FormContainer, Loader } from "../../../components";
 import { useCreateContest } from "../../../services/contest.service";
 import { formatToUTC } from "../../../helpers/date.helper";
 import { useCurrentUser } from "../../../helpers/security.helper";
+import { useNotification } from "../../../helpers/notifications.helper";
 
 const ContestsAdd = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { palette, typography } = useTheme();
+  const { pushNotification } = useNotification();
 
   const [name, setName] = useState("");
   const [startTime, setStartTime] = useState(DateTime.utc());
@@ -33,6 +37,10 @@ const ContestsAdd = () => {
     onSuccess: () => {
       queryClient.invalidateQueries("getUserContests");
       navigate("/dashboard/manage/contests");
+      pushNotification("Contest added with success", "success");
+    },
+    onError: () => {
+      pushNotification("Could not add contest", "error");
     },
   });
 
@@ -58,9 +66,6 @@ const ContestsAdd = () => {
 
   return currentUser.isSuccess ? (
     <FormContainer>
-      {createContest.isError && (
-        <Alert severity="error">{createContest.error.message}</Alert>
-      )}
       <Box>
         <Typography
           sx={{
@@ -172,14 +177,28 @@ const ContestsAdd = () => {
           label="Public scoreboard"
         />
       </Box>
-      <LoadingButton
-        loading={createContest.isLoading}
-        variant="contained"
-        fullWidth
-        onClick={onAdd}
-      >
-        Add
-      </LoadingButton>
+      <Grid container>
+        <Grid xs={6} item sx={{ pr: 1 }}>
+          <LoadingButton
+            loading={createContest.isLoading}
+            variant="contained"
+            fullWidth
+            onClick={onAdd}
+          >
+            Add
+          </LoadingButton>
+        </Grid>
+        <Grid xs={6} item sx={{ pl: 1 }}>
+          <Button
+            color="secondary"
+            variant="contained"
+            fullWidth
+            onClick={() => navigate(-1)}
+          >
+            Cancel
+          </Button>
+        </Grid>
+      </Grid>
     </FormContainer>
   ) : null;
 };

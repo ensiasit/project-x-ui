@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import {
   Box,
+  Button,
+  Grid,
   MenuItem,
   Select,
   TextField,
@@ -11,15 +13,17 @@ import { LoadingButton } from "@mui/lab";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
 import ReactCountryFlag from "react-country-flag";
-import { Alert, Error, FormContainer, Loader } from "../../../components";
+import { Error, FormContainer, Loader } from "../../../components";
 import { useCreateAffiliation } from "../../../services/affiliation.service";
 import { Country } from "../../../helpers/country.helper";
 import { useCurrentUser } from "../../../helpers/security.helper";
+import { useNotification } from "../../../helpers/notifications.helper";
 
 const AffiliationsAdd = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { palette, typography } = useTheme();
+  const { pushNotification } = useNotification();
 
   const [name, setName] = useState("");
   const [country, setCountry] = useState("MA");
@@ -30,6 +34,10 @@ const AffiliationsAdd = () => {
     onSuccess: () => {
       queryClient.invalidateQueries("getAffiliations");
       navigate("/dashboard/manage/affiliations");
+      pushNotification("Affiliation added with success", "success");
+    },
+    onError: () => {
+      pushNotification("Could not add affiliation", "error");
     },
   });
 
@@ -52,9 +60,6 @@ const AffiliationsAdd = () => {
 
   return currentUser.isSuccess ? (
     <FormContainer>
-      {createAffiliation.isError && (
-        <Alert severity="error">{createAffiliation.error.message}</Alert>
-      )}
       <Box>
         <Typography
           sx={{
@@ -116,14 +121,28 @@ const AffiliationsAdd = () => {
           onChange={(e) => setLogo((e.target as any).files[0])}
         />
       </Box>
-      <LoadingButton
-        loading={createAffiliation.isLoading}
-        variant="contained"
-        fullWidth
-        onClick={onAdd}
-      >
-        Add
-      </LoadingButton>
+      <Grid container>
+        <Grid xs={6} item sx={{ pr: 1 }}>
+          <LoadingButton
+            loading={createAffiliation.isLoading}
+            variant="contained"
+            fullWidth
+            onClick={onAdd}
+          >
+            Add
+          </LoadingButton>
+        </Grid>
+        <Grid xs={6} item sx={{ pl: 1 }}>
+          <Button
+            color="secondary"
+            variant="contained"
+            fullWidth
+            onClick={() => navigate(-1)}
+          >
+            Cancel
+          </Button>
+        </Grid>
+      </Grid>
     </FormContainer>
   ) : null;
 };

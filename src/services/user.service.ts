@@ -74,8 +74,10 @@ const addOne = async (payload: UserDto): Promise<UserDto> => {
   });
 };
 
-export const useUpdateUser = () => {
-  return useMutation<UserDto, Error, UserDto>(updateUser);
+export const useUpdateUser = (
+  options?: UseMutationOptions<UserDto, Error, UserDto>,
+) => {
+  return useMutation<UserDto, Error, UserDto>(updateUser, options);
 };
 
 export const useUsers = (options?: UseQueryOptions<UserDto[], Error>) => {

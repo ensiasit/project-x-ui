@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
 import { Role } from "../../../services/security.service";
-import { Alert, Error, Loader, Table } from "../../../components";
+import { Error, Loader, Table } from "../../../components";
 import {
   useDeleteContest,
   useGetUserContests,
@@ -12,10 +12,12 @@ import {
 import { TableColumn } from "../../../components/Table/Table";
 import { filter } from "../../../helpers/table.helper";
 import { useCurrentUser } from "../../../helpers/security.helper";
+import { useNotification } from "../../../helpers/notifications.helper";
 
 const Contests = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { pushNotification } = useNotification();
 
   const [search, setSearch] = useState("");
 
@@ -24,6 +26,10 @@ const Contests = () => {
   const deleteContest = useDeleteContest({
     onSuccess: () => {
       queryClient.invalidateQueries("getUserContests");
+      pushNotification("Contest deleted with success", "success");
+    },
+    onError: () => {
+      pushNotification("Could not delete contest", "error");
     },
   });
 
@@ -68,9 +74,6 @@ const Contests = () => {
 
   return currentUser.isSuccess && userContests.isSuccess ? (
     <Stack spacing={2}>
-      {deleteContest.isError && (
-        <Alert severity="error">Could not delete contests.</Alert>
-      )}
       <Box sx={{ display: "flex" }}>
         <TextField
           sx={{ flexGrow: 1, pr: 2 }}

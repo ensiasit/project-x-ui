@@ -2,6 +2,7 @@ import { useTheme } from "@mui/material";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { useQueryClient } from "react-query";
+import { Business, EmojiEvents, Person } from "@mui/icons-material";
 import { Content, Error, Header, Loader, Sidenav } from "../index";
 import { logout, Role } from "../../services/security.service";
 import { useGetUserContests } from "../../services/contest.service";
@@ -93,6 +94,7 @@ const Layout = () => {
           path: "/dashboard/manage/contests",
           subitems: [],
           enabled: true,
+          icon: <EmojiEvents />,
           isActive: (path) => path.startsWith("/dashboard/manage/contests"),
         },
         {
@@ -100,6 +102,7 @@ const Layout = () => {
           label: "Affiliations",
           path: "/dashboard/manage/affiliations",
           subitems: [],
+          icon: <Business />,
           enabled: currentUser.isSuccess && currentUser.data.admin,
           isActive: (path) => path.startsWith("/dashboard/manage/affiliations"),
         },
@@ -109,6 +112,7 @@ const Layout = () => {
           path: "/dashboard/manage/users",
           subitems: [],
           enabled: usersEnabled,
+          icon: <Person />,
           isActive: (path) => path.startsWith("/dashboard/manage/users"),
         },
       ],

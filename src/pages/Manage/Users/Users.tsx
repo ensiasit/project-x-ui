@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useCurrentUser } from "../../../helpers/security.helper";
-import { Alert, Error, Loader, Table } from "../../../components";
+import { Error, Loader, Table } from "../../../components";
 import { TableColumn } from "../../../components/Table/Table";
 import { filter } from "../../../helpers/table.helper";
 import { useDeleteUser } from "../../../services/user.service";
@@ -15,11 +15,13 @@ import {
 } from "../../../services/contest.service";
 import UserRoleSelect from "./UserRoleSelect";
 import { Role } from "../../../services/security.service";
+import { useNotification } from "../../../helpers/notifications.helper";
 
 const Users = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { currentContest } = useContext(globalContext);
+  const { pushNotification } = useNotification();
 
   const [search, setSearch] = useState("");
 
@@ -33,6 +35,10 @@ const Users = () => {
   const deleteUser = useDeleteUser({
     onSuccess: () => {
       queryClient.invalidateQueries("getUsers");
+      pushNotification("User deleted with success", "success");
+    },
+    onError: () => {
+      pushNotification("Could not delete user", "error");
     },
   });
 
@@ -99,9 +105,6 @@ const Users = () => {
 
   return currentUser.isSuccess && users.isSuccess ? (
     <Stack spacing={2}>
-      {deleteUser.isError && (
-        <Alert severity="error">Could not delete user</Alert>
-      )}
       <Box sx={{ display: "flex" }}>
         <TextField
           sx={{ flexGrow: 1, pr: 2 }}

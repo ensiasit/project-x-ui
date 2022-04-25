@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { Alert, Error, Loader, Table } from "../../../components";
+import { Error, Loader, Table } from "../../../components";
 import { TableColumn } from "../../../components/Table/Table";
 import { filter } from "../../../helpers/table.helper";
 import {
@@ -11,10 +11,12 @@ import {
   useGetAffiliations,
 } from "../../../services/affiliation.service";
 import { useCurrentUser } from "../../../helpers/security.helper";
+import { useNotification } from "../../../helpers/notifications.helper";
 
 const Affiliations = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { pushNotification } = useNotification();
 
   const [search, setSearch] = useState("");
 
@@ -25,6 +27,10 @@ const Affiliations = () => {
   const deleteAffiliation = useDeleteAffiliation({
     onSuccess: () => {
       queryClient.invalidateQueries("getAffiliations");
+      pushNotification("Affiliation deleted with success", "success");
+    },
+    onError: () => {
+      pushNotification("Could not delete affiliation", "error");
     },
   });
 
@@ -68,9 +74,6 @@ const Affiliations = () => {
 
   return currentUser.isSuccess && affiliations.isSuccess ? (
     <Stack spacing={2}>
-      {deleteAffiliation.isError && (
-        <Alert severity="error">Could not delete contests.</Alert>
-      )}
       {currentUser.data.admin && (
         <Box sx={{ display: "flex" }}>
           <TextField

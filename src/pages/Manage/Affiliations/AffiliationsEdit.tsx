@@ -2,6 +2,8 @@ import { useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
+  Button,
+  Grid,
   MenuItem,
   Select,
   TextField,
@@ -16,14 +18,16 @@ import {
   useUpdateAffiliation,
 } from "../../../services/affiliation.service";
 import { Country } from "../../../helpers/country.helper";
-import { Alert, Error, FormContainer, Loader } from "../../../components";
+import { Error, FormContainer, Loader } from "../../../components";
 import { useCurrentUser } from "../../../helpers/security.helper";
+import { useNotification } from "../../../helpers/notifications.helper";
 
 const AffiliationsEdit = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { palette, typography } = useTheme();
   const { affiliationId } = useParams();
+  const { pushNotification } = useNotification();
 
   const [name, setName] = useState("");
   const [country, setCountry] = useState("MA");
@@ -38,6 +42,10 @@ const AffiliationsEdit = () => {
       queryClient.invalidateQueries("getAffiliations");
       queryClient.invalidateQueries(["getAffiliation", Number(affiliationId)]);
       navigate("/dashboard/manage/affiliations");
+      pushNotification("Affiliation updated with success", "success");
+    },
+    onError: () => {
+      pushNotification("Could not update affiliation", "error");
     },
   });
 
@@ -71,9 +79,6 @@ const AffiliationsEdit = () => {
 
   return currentUser.isSuccess && affiliation.isSuccess ? (
     <FormContainer>
-      {updateAffiliation.isError && (
-        <Alert severity="error">{updateAffiliation.error.message}</Alert>
-      )}
       <Box>
         <Typography
           sx={{
@@ -141,14 +146,28 @@ const AffiliationsEdit = () => {
           onChange={(e) => setLogo((e.target as any).files[0])}
         />
       </Box>
-      <LoadingButton
-        loading={updateAffiliation.isLoading}
-        variant="contained"
-        fullWidth
-        onClick={onUpdate}
-      >
-        Update
-      </LoadingButton>
+      <Grid container>
+        <Grid xs={6} item sx={{ pr: 1 }}>
+          <LoadingButton
+            loading={updateAffiliation.isLoading}
+            variant="contained"
+            fullWidth
+            onClick={onUpdate}
+          >
+            Update
+          </LoadingButton>
+        </Grid>
+        <Grid xs={6} item sx={{ pl: 1 }}>
+          <Button
+            color="secondary"
+            variant="contained"
+            fullWidth
+            onClick={() => navigate(-1)}
+          >
+            Cancel
+          </Button>
+        </Grid>
+      </Grid>
     </FormContainer>
   ) : null;
 };
