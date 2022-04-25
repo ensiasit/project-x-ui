@@ -12,7 +12,7 @@ RUN npm install react-scripts@5.0.0 -g --silent
 
 COPY . ./
 
-ENV REACT_APP_API_BASE_URL=http://www.ensiasit.club:8081/api/v1
+ENV REACT_APP_ENV="production"
 
 RUN npm run build
 
