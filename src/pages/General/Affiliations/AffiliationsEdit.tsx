@@ -41,7 +41,7 @@ const AffiliationsEdit = () => {
     onSuccess: () => {
       queryClient.invalidateQueries("getAffiliations");
       queryClient.invalidateQueries(["getAffiliation", Number(affiliationId)]);
-      navigate("/dashboard/manage/affiliations");
+      navigate("/dashboard/general/affiliations");
       pushNotification("Affiliation updated with success", "success");
     },
     onError: () => {

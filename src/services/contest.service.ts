@@ -186,9 +186,15 @@ export const getLocalStorageCurrentContest = (): UserContestRole | null => {
   );
 };
 
-export const setLocalStorageCurrentContest = (contestRole: UserContestRole) => {
-  localStorage.setItem(
-    CURRENT_CONTEST_LOCAL_STORAGE_KEY,
-    JSON.stringify(contestRole),
-  );
+export const setLocalStorageCurrentContest = (
+  contestRole: UserContestRole | null,
+) => {
+  if (contestRole === null) {
+    localStorage.removeItem(CURRENT_CONTEST_LOCAL_STORAGE_KEY);
+  } else {
+    localStorage.setItem(
+      CURRENT_CONTEST_LOCAL_STORAGE_KEY,
+      JSON.stringify(contestRole),
+    );
+  }
 };

@@ -65,7 +65,9 @@ const Dropdown = ({ name, items, isProfile }: DropdownProps) => {
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
       >
-        <Typography sx={{ flexGrow: 1 }}>{selectedItem?.label}</Typography>
+        <Typography sx={{ flexGrow: 1, textAlign: "left" }}>
+          {selectedItem?.label}
+        </Typography>
         {nonSelectedItems.length > 0 &&
           (open ? <ExpandLessIcon /> : <ExpandMoreIcon />)}
       </Button>

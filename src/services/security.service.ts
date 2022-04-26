@@ -24,7 +24,6 @@ export enum Role {
   ROLE_ADMIN = "ROLE_ADMIN",
   ROLE_MODERATOR = "ROLE_MODERATOR",
   ROLE_USER = "ROLE_USER",
-  ROLE_NOTHING = "ROLE_NOTHING",
 }
 
 const login = async (loginRequest: LoginRequest): Promise<LoginResponse> => {

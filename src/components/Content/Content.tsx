@@ -1,9 +1,6 @@
 import React from "react";
 import { Box, useTheme } from "@mui/material";
 import { grey } from "@mui/material/colors";
-
-import { SnackbarProvider } from "notistack";
-import { CheckCircle, Error, Info, Warning } from "@mui/icons-material";
 import { HEADER_HEIGHT, SIDENAV_WIDTH } from "../../helpers/theme.constans";
 
 interface ContentProps {
@@ -26,24 +23,7 @@ const Content = ({ children }: ContentProps) => {
         color: palette.text.primary,
       }}
     >
-      <SnackbarProvider
-        anchorOrigin={{ horizontal: "right", vertical: "top" }}
-        maxSnack={4}
-        iconVariant={{
-          success: <CheckCircle sx={{ mr: 1, color: palette.success.main }} />,
-          info: <Info sx={{ mr: 1, color: palette.info.main }} />,
-          warning: <Warning sx={{ mr: 1, color: palette.warning.main }} />,
-          error: <Error sx={{ mr: 1, color: palette.error.main }} />,
-        }}
-        classes={{
-          variantSuccess: `snackbar-success-${palette.mode}`,
-          variantInfo: `snackbar-info-${palette.mode}`,
-          variantWarning: `snackbar-warning-${palette.mode}`,
-          variantError: `snackbar-error-${palette.mode}`,
-        }}
-      >
-        {children}
-      </SnackbarProvider>
+      {children}
     </Box>
   );
 };

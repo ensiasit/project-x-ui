@@ -36,7 +36,7 @@ const ContestsAdd = () => {
   const createContest = useCreateContest({
     onSuccess: () => {
       queryClient.invalidateQueries("getUserContests");
-      navigate("/dashboard/manage/contests");
+      navigate("/dashboard/general/contests");
       pushNotification("Contest added with success", "success");
     },
     onError: () => {

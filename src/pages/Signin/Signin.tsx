@@ -13,10 +13,12 @@ import { LoadingButton } from "@mui/lab";
 import { Loader } from "../../components";
 import { useLogin } from "../../services/security.service";
 import { useCurrentUser } from "../../helpers/security.helper";
+import { useNotification } from "../../helpers/notifications.helper";
 
 const Signin = () => {
   const navigate = useNavigate();
   const { palette, typography } = useTheme();
+  const { pushNotification } = useNotification();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,6 +27,9 @@ const Signin = () => {
   const login = useLogin({
     onSuccess: () => {
       navigate("/dashboard");
+    },
+    onError: () => {
+      pushNotification("Wrong email or password", "error");
     },
   });
 

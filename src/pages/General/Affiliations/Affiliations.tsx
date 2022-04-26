@@ -69,7 +69,7 @@ const Affiliations = () => {
   };
 
   const onRowUpdate = (id: number) => {
-    navigate(`/dashboard/manage/affiliations/edit/${id}`);
+    navigate(`/dashboard/general/affiliations/edit/${id}`);
   };
 
   return currentUser.isSuccess && affiliations.isSuccess ? (
@@ -85,7 +85,7 @@ const Affiliations = () => {
           />
           <Button
             variant="contained"
-            onClick={() => navigate("/dashboard/manage/affiliations/add")}
+            onClick={() => navigate("/dashboard/general/affiliations/add")}
           >
             <Add fontSize="small" sx={{ mr: 1 }} />
             Add affiliation

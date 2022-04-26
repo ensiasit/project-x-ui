@@ -33,7 +33,7 @@ const AffiliationsAdd = () => {
   const createAffiliation = useCreateAffiliation({
     onSuccess: () => {
       queryClient.invalidateQueries("getAffiliations");
-      navigate("/dashboard/manage/affiliations");
+      navigate("/dashboard/general/affiliations");
       pushNotification("Affiliation added with success", "success");
     },
     onError: () => {

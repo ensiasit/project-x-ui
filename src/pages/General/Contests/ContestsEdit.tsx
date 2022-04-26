@@ -42,9 +42,10 @@ const ContestsEdit = () => {
   });
   const updateContest = useUpdateContest({
     onSuccess: () => {
+      queryClient.invalidateQueries("getContests");
       queryClient.invalidateQueries("getUserContests");
       queryClient.invalidateQueries(["getContest", Number(contestId)]);
-      navigate("/dashboard/manage/contests");
+      navigate("/dashboard/general/contests");
       pushNotification("Contest updated with success", "success");
     },
     onError: () => {
@@ -71,7 +72,11 @@ const ContestsEdit = () => {
     return <Error message="Could not fetch contest" />;
   }
 
-  const onAdd = () => {
+  if (currentUser.isSuccess && !currentUser.data.admin) {
+    return <Error message="You don't have access." />;
+  }
+
+  const onUpdate = () => {
     updateContest.mutate({
       id: Number(contestId),
       name,
@@ -202,7 +207,7 @@ const ContestsEdit = () => {
             loading={updateContest.isLoading}
             variant="contained"
             fullWidth
-            onClick={onAdd}
+            onClick={onUpdate}
           >
             Update
           </LoadingButton>

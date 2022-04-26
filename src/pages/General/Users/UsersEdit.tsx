@@ -39,7 +39,7 @@ const UsersEdit = () => {
         "getContestUsers",
         Number((currentContest as UserContestRole).contest.id),
       ]);
-      navigate("/dashboard/manage/users");
+      navigate("/dashboard/general/users");
       pushNotification("User updated with success", "success");
     },
     onError: () => {
@@ -53,10 +53,6 @@ const UsersEdit = () => {
       setEmail(user.data.email);
     }
   }, [user.status]);
-
-  if (currentContest === null) {
-    return <Error message="You must choose a contest to see this page" />;
-  }
 
   if (user.isError) {
     return <Error message="Could not fetch user." />;

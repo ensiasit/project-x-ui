@@ -36,7 +36,7 @@ const UsersAdd = () => {
         "getContestUsers",
         Number((currentContest as UserContestRole).contest.id),
       ]);
-      navigate("/dashboard/manage/users");
+      navigate("/dashboard/general/users");
       pushNotification("User added with success", "success");
     },
     onError: () => {

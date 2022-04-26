@@ -13,10 +13,12 @@ import { LoadingButton } from "@mui/lab";
 import { Loader } from "../../components";
 import { useRegister } from "../../services/security.service";
 import { useCurrentUser } from "../../helpers/security.helper";
+import { useNotification } from "../../helpers/notifications.helper";
 
 const Signup = () => {
   const navigate = useNavigate();
   const { palette, typography } = useTheme();
+  const { pushNotification } = useNotification();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -27,6 +29,10 @@ const Signup = () => {
   const register = useRegister({
     onSuccess: () => {
       navigate("/signin");
+      pushNotification("Account created with success", "success");
+    },
+    onError: () => {
+      pushNotification("Incorrect account information", "error");
     },
   });
 

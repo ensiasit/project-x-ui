@@ -4,7 +4,7 @@ import { UserContestRole } from "../services/contest.service";
 export interface GlobalContext {
   toggleTheme: () => void;
   currentContest: UserContestRole | null;
-  setCurrentContest: (contestRole: UserContestRole) => void;
+  setCurrentContest: (contestRole: UserContestRole | null) => void;
 }
 
 export const globalContext = createContext<GlobalContext>({

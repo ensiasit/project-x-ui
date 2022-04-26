@@ -3,11 +3,10 @@ import { Add } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
-import { Role } from "../../../services/security.service";
 import { Error, Loader, Table } from "../../../components";
 import {
   useDeleteContest,
-  useGetUserContests,
+  useGetContests,
 } from "../../../services/contest.service";
 import { TableColumn } from "../../../components/Table/Table";
 import { filter } from "../../../helpers/table.helper";
@@ -22,10 +21,10 @@ const Contests = () => {
   const [search, setSearch] = useState("");
 
   const currentUser = useCurrentUser(true);
-  const userContests = useGetUserContests({ enabled: currentUser.isSuccess });
+  const contests = useGetContests({ enabled: currentUser.isSuccess });
   const deleteContest = useDeleteContest({
     onSuccess: () => {
-      queryClient.invalidateQueries("getUserContests");
+      queryClient.invalidateQueries("getContests");
       pushNotification("Contest deleted with success", "success");
     },
     onError: () => {
@@ -33,12 +32,16 @@ const Contests = () => {
     },
   });
 
-  if (currentUser.isLoading || userContests.isLoading) {
+  if (currentUser.isLoading || contests.isLoading) {
     return <Loader />;
   }
 
-  if (userContests.isError) {
+  if (contests.isError) {
     return <Error message="Could not fetch contests" />;
+  }
+
+  if (currentUser.isSuccess && !currentUser.data.admin) {
+    return <Error message="You don't have access." />;
   }
 
   const cols: TableColumn[] = [
@@ -50,16 +53,14 @@ const Contests = () => {
     { id: "publicScoreboard", label: "Public scoreboard", type: "boolean" },
   ];
 
-  const rows = userContests.isSuccess
-    ? userContests.data
-        .filter(({ role }) => role !== Role.ROLE_NOTHING)
-        .map(({ role, contest }) => {
-          return {
-            ...contest,
-            canEdit: role === Role.ROLE_ADMIN || role === Role.ROLE_MODERATOR,
-            canDelete: role === Role.ROLE_ADMIN || role === Role.ROLE_MODERATOR,
-          };
-        })
+  const rows = contests.isSuccess
+    ? contests.data.map((contest) => {
+        return {
+          ...contest,
+          canEdit: true,
+          canDelete: true,
+        };
+      })
     : [];
 
   const filteredRows = filter(rows, search);
@@ -69,10 +70,10 @@ const Contests = () => {
   };
 
   const onRowUpdate = (id: number) => {
-    navigate(`/dashboard/manage/contests/edit/${id}`);
+    navigate(`/dashboard/general/contests/edit/${id}`);
   };
 
-  return currentUser.isSuccess && userContests.isSuccess ? (
+  return currentUser.isSuccess && contests.isSuccess ? (
     <Stack spacing={2}>
       <Box sx={{ display: "flex" }}>
         <TextField
@@ -85,7 +86,7 @@ const Contests = () => {
         <Button
           disabled={!currentUser.data.admin}
           variant="contained"
-          onClick={() => navigate("/dashboard/manage/contests/add")}
+          onClick={() => navigate("/dashboard/general/contests/add")}
         >
           <Add fontSize="small" sx={{ mr: 1 }} />
           Add contest

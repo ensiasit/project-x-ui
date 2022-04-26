@@ -9,19 +9,21 @@ import {
   AffiliationsEdit,
   Contests,
   ContestsAdd,
+  Problems,
   Profile,
+  Settings,
   Signin,
   Signup,
+  Teams,
   Users,
   UsersAdd,
   UsersEdit,
 } from "./pages";
 import { darkTheme, lightTheme } from "./helpers/theme.constans";
 import { GlobalContext, globalContext } from "./helpers/context.helper";
-import ContestsEdit from "./pages/Manage/Contests/ContestsEdit";
-import { Layout } from "./components";
+import ContestsEdit from "./pages/General/Contests/ContestsEdit";
+import { Layout, NotificationProvider } from "./components";
 import {
-  getLocalStorageCurrentContest,
   setLocalStorageCurrentContest,
   UserContestRole,
 } from "./services/contest.service";
@@ -31,7 +33,7 @@ const queryClient = new QueryClient();
 const App = () => {
   const [theme, setTheme] = useState(lightTheme);
   const [currentContest, setCurrentContest] = useState<UserContestRole | null>(
-    getLocalStorageCurrentContest(),
+    null,
   );
 
   const toggleTheme = () => {
@@ -57,35 +59,46 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <globalContext.Provider value={globalContextValue}>
         <ThemeProvider theme={theme}>
-          <Routes>
-            <Route path="/signin" element={<Signin />} />
-            <Route path="/signup" element={<Signup />} />
+          <NotificationProvider>
+            <Routes>
+              <Route path="/signin" element={<Signin />} />
+              <Route path="/signup" element={<Signup />} />
 
-            <Route path="/dashboard" element={<Layout />}>
-              <Route path="profile" element={<Profile />} />
+              <Route path="/dashboard" element={<Layout />}>
+                <Route path="profile" element={<Profile />} />
 
-              <Route path="manage/contests" element={<Contests />} />
-              <Route path="manage/contests/add" element={<ContestsAdd />} />
-              <Route
-                path="manage/contests/edit/:contestId"
-                element={<ContestsEdit />}
-              />
+                <Route path="general/contests" element={<Contests />} />
+                <Route path="general/contests/add" element={<ContestsAdd />} />
+                <Route
+                  path="general/contests/edit/:contestId"
+                  element={<ContestsEdit />}
+                />
 
-              <Route path="manage/affiliations" element={<Affiliations />} />
-              <Route
-                path="manage/affiliations/add"
-                element={<AffiliationsAdd />}
-              />
-              <Route
-                path="manage/affiliations/edit/:affiliationId"
-                element={<AffiliationsEdit />}
-              />
+                <Route path="general/affiliations" element={<Affiliations />} />
+                <Route
+                  path="general/affiliations/add"
+                  element={<AffiliationsAdd />}
+                />
+                <Route
+                  path="general/affiliations/edit/:affiliationId"
+                  element={<AffiliationsEdit />}
+                />
 
-              <Route path="manage/users" element={<Users />} />
-              <Route path="manage/users/add" element={<UsersAdd />} />
-              <Route path="manage/users/edit/:userId" element={<UsersEdit />} />
-            </Route>
-          </Routes>
+                <Route path="general/users" element={<Users />} />
+                <Route path="general/users/add" element={<UsersAdd />} />
+                <Route
+                  path="general/users/edit/:userId"
+                  element={<UsersEdit />}
+                />
+
+                <Route path="general/problems" element={<Problems />} />
+
+                <Route path="manage/settings" element={<Settings />} />
+
+                <Route path="manage/teams" element={<Teams />} />
+              </Route>
+            </Routes>
+          </NotificationProvider>
         </ThemeProvider>
       </globalContext.Provider>
     </QueryClientProvider>

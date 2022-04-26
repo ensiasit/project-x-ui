@@ -1,8 +1,14 @@
 import { useTheme } from "@mui/material";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
-import { useQueryClient } from "react-query";
-import { Business, EmojiEvents, Person } from "@mui/icons-material";
+import {
+  Article,
+  Business,
+  EmojiEvents,
+  Group,
+  Person,
+  Settings,
+} from "@mui/icons-material";
 import { Content, Error, Header, Loader, Sidenav } from "../index";
 import { logout, Role } from "../../services/security.service";
 import { useGetUserContests } from "../../services/contest.service";
@@ -17,7 +23,6 @@ const Layout = () => {
   const { toggleTheme } = useContext<GlobalContext>(globalContext);
   const { palette } = useTheme();
   const { currentContest, setCurrentContest } = useContext(globalContext);
-  const queryClient = useQueryClient();
 
   const currentUser = useCurrentUser(true);
   const userContests = useGetUserContests({
@@ -47,21 +52,21 @@ const Layout = () => {
 
   const onSignOut = () => {
     logout();
+    setCurrentContest(null);
     navigate("/signin");
   };
 
   const contests: DropdownItem[] = userContests.isSuccess
     ? userContests.data
-        .filter(({ role }) => role !== Role.ROLE_NOTHING)
+        .filter(
+          ({ role }) =>
+            role === Role.ROLE_ADMIN || role === Role.ROLE_MODERATOR,
+        )
         .map((userContestRole) =>
           mapUserContestRoleToDropdownItem(
             userContestRole,
             () => {
               setCurrentContest(userContestRole);
-              queryClient.invalidateQueries([
-                "getContestUsers",
-                userContestRole.contest.id,
-              ]);
             },
             currentContest !== null &&
               userContestRole.contest.id === currentContest.contest.id,
@@ -70,50 +75,79 @@ const Layout = () => {
     : [];
 
   const manageEnabled =
-    currentUser.isSuccess &&
-    (currentUser.data.admin ||
-      (userContests.isSuccess &&
-        !!userContests.data.find(
-          ({ role }) =>
-            role === Role.ROLE_MODERATOR || role === Role.ROLE_ADMIN,
-        )));
-
-  const usersEnabled =
-    currentContest?.role === Role.ROLE_MODERATOR ||
-    currentContest?.role === Role.ROLE_ADMIN;
+    currentContest !== null &&
+    (currentContest.role === Role.ROLE_MODERATOR ||
+      currentContest.role === Role.ROLE_ADMIN);
 
   const sidenavItems: ListItem[] = [
+    {
+      id: "general",
+      label: "General",
+      path: "",
+      enabled: currentUser.isSuccess && currentUser.data.admin,
+      isActive: () => false,
+      subitems: [
+        {
+          id: "contests",
+          label: "Contests",
+          path: "/dashboard/general/contests",
+          subitems: [],
+          enabled: true,
+          icon: <EmojiEvents />,
+          isActive: (path) => path.startsWith("/dashboard/general/contests"),
+        },
+        {
+          id: "affiliations",
+          label: "Affiliations",
+          path: "/dashboard/general/affiliations",
+          subitems: [],
+          icon: <Business />,
+          enabled: true,
+          isActive: (path) =>
+            path.startsWith("/dashboard/general/affiliations"),
+        },
+        {
+          id: "problems",
+          label: "Problems",
+          path: "/dashboard/general/problems",
+          subitems: [],
+          icon: <Article />,
+          enabled: true,
+          isActive: (path) => path.startsWith("/dashboard/general/problems"),
+        },
+        {
+          id: "users",
+          label: "Users",
+          path: "/dashboard/general/users",
+          subitems: [],
+          enabled: true,
+          icon: <Person />,
+          isActive: (path) => path.startsWith("/dashboard/general/users"),
+        },
+      ],
+    },
     {
       id: "manage",
       label: "Manage",
       path: "",
       subitems: [
         {
-          id: "contests",
-          label: "Contests",
-          path: "/dashboard/manage/contests",
+          id: "settings",
+          label: "Settings",
+          path: "/dashboard/manage/settings",
           subitems: [],
+          icon: <Settings />,
           enabled: true,
-          icon: <EmojiEvents />,
-          isActive: (path) => path.startsWith("/dashboard/manage/contests"),
+          isActive: (path) => path.startsWith("/dashboard/manage/settings"),
         },
         {
-          id: "affiliations",
-          label: "Affiliations",
-          path: "/dashboard/manage/affiliations",
+          id: "teams",
+          label: "Teams",
+          path: "/dashboard/manage/teams",
           subitems: [],
-          icon: <Business />,
-          enabled: currentUser.isSuccess && currentUser.data.admin,
-          isActive: (path) => path.startsWith("/dashboard/manage/affiliations"),
-        },
-        {
-          id: "users",
-          label: "Users",
-          path: "/dashboard/manage/users",
-          subitems: [],
-          enabled: usersEnabled,
-          icon: <Person />,
-          isActive: (path) => path.startsWith("/dashboard/manage/users"),
+          icon: <Group />,
+          enabled: true,
+          isActive: (path) => path.startsWith("/dashboard/manage/teams"),
         },
       ],
       enabled: manageEnabled,
@@ -124,7 +158,7 @@ const Layout = () => {
       label: "Compete",
       path: "",
       subitems: [],
-      enabled: true,
+      enabled: false,
       isActive: () => false,
     },
   ];

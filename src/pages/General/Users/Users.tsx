@@ -1,37 +1,26 @@
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "react-query";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useCurrentUser } from "../../../helpers/security.helper";
 import { Error, Loader, Table } from "../../../components";
 import { TableColumn } from "../../../components/Table/Table";
 import { filter } from "../../../helpers/table.helper";
-import { useDeleteUser } from "../../../services/user.service";
-import { globalContext } from "../../../helpers/context.helper";
-import {
-  useContestUsers,
-  UserContestRole,
-} from "../../../services/contest.service";
-import UserRoleSelect from "./UserRoleSelect";
-import { Role } from "../../../services/security.service";
+import { useDeleteUser, useUsers } from "../../../services/user.service";
 import { useNotification } from "../../../helpers/notifications.helper";
 
 const Users = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { currentContest } = useContext(globalContext);
   const { pushNotification } = useNotification();
 
   const [search, setSearch] = useState("");
 
   const currentUser = useCurrentUser(true);
-  const users = useContestUsers(
-    (currentContest as UserContestRole).contest.id,
-    {
-      enabled: currentUser.isSuccess && !!currentUser,
-    },
-  );
+  const users = useUsers({
+    enabled: currentUser.isSuccess,
+  });
   const deleteUser = useDeleteUser({
     onSuccess: () => {
       queryClient.invalidateQueries("getUsers");
@@ -42,10 +31,6 @@ const Users = () => {
     },
   });
 
-  if (currentContest === null) {
-    return <Error message="You must choose a contest to see this page" />;
-  }
-
   if (currentUser.isLoading || users.isLoading) {
     return <Loader />;
   }
@@ -54,41 +39,22 @@ const Users = () => {
     return <Error message="Could not fetch users" />;
   }
 
-  if (
-    currentContest.role !== Role.ROLE_MODERATOR &&
-    currentContest.role !== Role.ROLE_ADMIN
-  ) {
+  if (currentUser.isSuccess && !currentUser.data.admin) {
     return <Error message="You don't have access." />;
   }
 
   const cols: TableColumn[] = [
     { id: "username", label: "Name", type: "string" },
     { id: "email", label: "Email", type: "string" },
-    { id: "role", label: "Role", type: "custom" },
   ];
 
   const rows =
     currentUser.isSuccess && users.isSuccess
-      ? users.data.map(({ role, user, contest }) => {
+      ? users.data.map((user) => {
           return {
             ...user,
-            user,
-            contest,
-            canEdit: currentUser.isSuccess && currentUser.data.admin,
-            canDelete: currentUser.isSuccess && currentUser.data.admin,
-            _role: role,
-            role: {
-              render: () => {
-                return (
-                  <UserRoleSelect
-                    key={String(Math.random())}
-                    userId={user.id}
-                    initialRole={role}
-                    currentUserId={currentUser.data.id}
-                  />
-                );
-              },
-            },
+            canEdit: true,
+            canDelete: true,
           };
         })
       : [];
@@ -100,7 +66,7 @@ const Users = () => {
   };
 
   const onRowUpdate = (id: number) => {
-    navigate(`/dashboard/manage/users/edit/${id}`);
+    navigate(`/dashboard/general/users/edit/${id}`);
   };
 
   return currentUser.isSuccess && users.isSuccess ? (
@@ -116,7 +82,7 @@ const Users = () => {
         <Button
           disabled={!currentUser.data.admin}
           variant="contained"
-          onClick={() => navigate("/dashboard/manage/users/add")}
+          onClick={() => navigate("/dashboard/general/users/add")}
         >
           <Add fontSize="small" sx={{ mr: 1 }} />
           Add user
